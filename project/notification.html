@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        .dark-theme .navbar {
+            background: rgba(13, 13, 13, 0.95);
+            color: #fff;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bcd4;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+        }
+        .dark-theme .logo {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+        .main-content {
+            padding: 20px;
+            margin-top: 80px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .notification-list {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        .dark-theme .notification-list {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .notification-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .notification-item {
+            border-bottom-color: #333;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-item.ready {
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .dark-theme .notification-item.ready {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        .notification-item.progress {
+            background: rgba(33, 150, 243, 0.1);
+        }
+        .dark-theme .notification-item.progress {
+            background: rgba(33, 150, 243, 0.2);
+        }
+        .notification-item.shipping {
+            background: rgba(255, 152, 0, 0.1);
+        }
+        .dark-theme .notification-item.shipping {
+            background: rgba(255, 152, 0, 0.2);
+        }
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .notification-icon.ready {
+            background: #4CAF50;
+        }
+        .notification-icon.progress {
+            background: #2196F3;
+        }
+        .notification-icon.shipping {
+            background: #FF9800;
+        }
+        .notification-content {
+            flex-grow: 1;
+        }
+        .notification-title {
+            color: #4CAF50;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .notification-title.ready {
+            color: #4CAF50;
+        }
+        .notification-title.progress {
+            color: #2196F3;
+        }
+        .notification-title.shipping {
+            color: #FF9800;
+        }
+        .dark-theme .notification-title {
+            color: #81C784;
+        }
+        .dark-theme .notification-title.ready {
+            color: #81C784;
+        }
+        .dark-theme .notification-title.progress {
+            color: #64B5F6;
+        }
+        .dark-theme .notification-title.shipping {
+            color: #FFB74D;
+        }
+        .notification-message {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .dark-theme .notification-message {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .notification-time {
+            color: #999;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .dark-theme .notification-time {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .back-button {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+        .dark-theme .back-button {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .back-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .review-button {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dark-theme .review-button {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .review-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+        .review-button i {
+            font-size: 0.9em;
+        }
+        .review-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .review-modal.active {
+            display: flex;
+        }
+        .review-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .dark-theme .review-content {
+            background: #1a1a1a;
+        }
+        .outfit-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .outfit-image {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .order-details {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 188, 212, 0.1);
+            border-radius: 10px;
+        }
+        .dark-theme .order-details {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .order-details h3 {
+            color: #00bcd4;
+            margin-bottom: 10px;
+        }
+        .dark-theme .order-details h3 {
+            color: #00ffff;
+        }
+        .order-details p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .dark-theme .order-details p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .close-review {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .close-review {
+            color: #fff;
+        }
+        .close-review:hover {
+            color: #00bcd4;
+            transform: scale(1.1);
+        }
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .rating-stars {
+            display: flex;
+            gap: 10px;
+            font-size: 24px;
+            color: #ffd700;
+        }
+        .rating-stars i {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .rating-stars i:hover {
+            transform: scale(1.2);
+        }
+        .review-textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 0.9em;
+        }
+        .dark-theme .review-textarea {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .submit-review {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 100%;
+        }
+        .dark-theme .submit-review {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .submit-review:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">TERA</div>
+        <div class="nav-icons">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="notification-list">
+            <div class="notification-item ready">
+                <div class="notification-icon ready">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title ready">Order Ready!</div>
+                    <div class="notification-message">Your order #12345 is ready for pickup at the store.</div>
+                    <div class="notification-time">Just now</div>
+                    <div class="notification-actions">
+                        <button class="review-button" onclick="openReviewModal('12345')">
+                            <i class="fas fa-star"></i> Review
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item progress">
+                <div class="notification-icon progress">
+                    <i class="fas fa-cog fa-spin"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title progress">Order in Progress</div>
+                    <div class="notification-message">Your order #12346 is being tailored. Estimated completion: 2 days</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+            </div>
+
+            <div class="notification-item shipping">
+                <div class="notification-icon shipping">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title shipping">Order Shipped</div>
+                    <div class="notification-message">Your order #12347 has been shipped. Track your delivery here.</div>
+                    <div class="notification-time">1 day ago</div>
+                    <div class="notification-actions">
+                        <button class="review-button" onclick="trackOrder('12347')">
+                            <i class="fas fa-map-marker-alt"></i> Track
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notification-item progress">
+                <div class="notification-icon progress">
+                    <i class="fas fa-cog fa-spin"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title progress">Measurement Confirmed</div>
+                    <div class="notification-message">Your measurements for order #12348 have been confirmed by the tailor.</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+
+            <div class="notification-item shipping">
+                <div class="notification-icon shipping">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title shipping">Delivery Update</div>
+                    <div class="notification-message">Your order #12349 is out for delivery. Expected arrival: Today</div>
+                    <div class="notification-time">3 days ago</div>
+                </div>
+            </div>
+        </div>
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </button>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="review-modal" id="reviewModal">
+        <div class="review-content">
+            <button class="close-review" onclick="closeReviewModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2>Order Review</h2>
+            <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Stitched Outfit" class="outfit-image">
+            <div class="order-details">
+                <h3>Order Details</h3>
+                <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+                <p><strong>Status:</strong> <span id="modalOrderStatus"></span></p>
+            </div>
+            <div id="reviewSection">
+                <button class="submit-review" id="modifyBtn" style="margin-bottom: 10px;" onclick="showReviewTextarea()">Modify</button>
+                <button class="submit-review" style="margin-bottom: 10px;" onclick="closeReviewModal()">OK</button>
+                <div id="reviewInputSection" style="display:none;">
+                    <div style="color:#00bcd4; font-size:0.95em; margin-bottom:5px;">
+                        <i class="fas fa-info-circle"></i> Please share your experience with your stitched outfit.
+                    </div>
+                    <div id="reviewSubmittedMsg" style="display:none; color:green; margin-bottom:10px;">
+                        Submitted
+                    </div>
+                    <textarea class="review-textarea" id="reviewTextarea" placeholder="Write your review here..."></textarea>
+                    <button class="submit-review" id="submitReviewBtn" style="margin-top: 10px;" onclick="submitReview()">Submit Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+            
+            // Save theme preference
+            localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Check if user is logged in
+        window.addEventListener('load', function() {
+            const consumerName = localStorage.getItem('consumerName');
+            if (!consumerName) {
+                window.location.href = 'consumer-login.html';
+            }
+        });
+
+        let currentOrderId = null;
+        let currentRating = 0;
+        let reviewSubmitted = false;
+
+        function openReviewModal(orderId) {
+            currentOrderId = orderId;
+            document.getElementById('reviewModal').classList.add('active');
+            
+            // Update modal content based on order ID
+            document.getElementById('modalOrderId').textContent = orderId;
+            
+            // Set order status based on order ID
+            const orderStatus = document.getElementById('modalOrderStatus');
+            
+            if (orderId === '12345') {
+                orderStatus.textContent = 'Ready for Pickup';
+            } else if (orderId === '12347') {
+                orderStatus.textContent = 'Shipped';
+            } else if (orderId === '12349') {
+                orderStatus.textContent = 'Out for Delivery';
+            }
+        }
+
+        function sendReviewToTailor(reviewText) {
+            // Example: send to backend API (replace URL and payload as needed)
+            fetch('https://your-backend-api.com/send-review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId: currentOrderId,
+                    review: reviewText
+                })
+            })
+            .finally(() => {
+                // Always show the submitted message, no alerts
+                document.getElementById('reviewSubmittedMsg').style.display = 'block';
+            });
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+            document.getElementById('reviewSubmittedMsg').style.display = 'none';
+            const submitBtn = document.getElementById('submitReviewBtn');
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.textContent = 'Submit Review';
+            reviewSubmitted = false;
+            currentOrderId = null;
+            currentRating = 0;
+            resetStars();
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.rating-stars i');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.style.color = '#ffd700';
+                } else {
+                    star.style.color = '#ccc';
+                }
+            });
+        }
+
+        function resetStars() {
+            const stars = document.querySelectorAll('.rating-stars i');
+            stars.forEach(star => {
+                star.style.color = '#ffd700';
+            });
+        }
+
+        function showReviewTextarea() {
+            document.getElementById('reviewInputSection').style.display = 'block';
+            document.getElementById('modifyBtn').style.display = 'none';
+        }
+
+        function submitReview() {
+            const review = document.getElementById('reviewTextarea').value;
+            const submitBtn = document.getElementById('submitReviewBtn');
+            if (review.trim() === '') {
+                alert('Please enter your review before submitting.');
+                return;
+            }
+            sendReviewToTailor(review);
+            reviewSubmitted = true;
+            document.getElementById('reviewSubmittedMsg').style.display = 'block';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.textContent = 'Submitted';
+            // Show popup and go back to main page
+            setTimeout(function() {
+                alert('Review submitted!');
+                closeReviewModal();
+                // Redirect to main notifications page if not already there
+                window.location.href = 'index.html';
+            }, 200); // slight delay for UI feedback
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('reviewModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeReviewModal();
+            }
+        });
+
+        function trackOrder(orderId) {
+            // You can replace this with a modal or a redirect to a tracking page
+            alert('Tracking details for order #' + orderId + ':\nStatus: In Transit\nExpected Delivery: Tomorrow\nTracking Link: https://tracking.example.com/' + orderId);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Terms and Conditions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .terms-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .terms-container {
+            background: #1a1a1a;
+        }
+        .terms-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #00bcd4;
+        }
+        .dark-theme .terms-header {
+            border-bottom-color: #00ffff;
+        }
+        .terms-header h1 {
+            color: #00bcd4;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .dark-theme .terms-header h1 {
+            color: #00ffff;
+        }
+        .terms-section {
+            margin-bottom: 30px;
+        }
+        .terms-section h2 {
+            color: #00bcd4;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .dark-theme .terms-section h2 {
+            color: #00ffff;
+        }
+        .terms-section p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .terms-section ul {
+            list-style-type: none;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        .terms-section li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .terms-section li:before {
+            content: "•";
+            color: #00bcd4;
+            position: absolute;
+            left: 0;
+        }
+        .dark-theme .terms-section li:before {
+            color: #00ffff;
+        }
+        .accept-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .accept-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .accept-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="terms-container">
+        <div class="terms-header">
+            <h1>Terms and Conditions</h1>
+            <p>2-Year Full-Time Employment Bond Agreement</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>Important Notice</h2>
+            <p>This platform is exclusively for full-time workers who are committed to a minimum 2-year employment bond. By accepting these terms, you acknowledge and agree to the following conditions:</p>
+        </div>
+
+        <div class="terms-section">
+            <h2>Employment Requirements</h2>
+            <ul>
+                <li>You must be a full-time worker (40 hours per week minimum)</li>
+                <li>You agree to a mandatory 2-year employment bond</li>
+                <li>You must maintain professional conduct and work ethics</li>
+                <li>You agree to complete all assigned training and courses</li>
+                <li>You understand that early termination may result in penalties</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h2>Bond Agreement Details</h2>
+            <ul>
+                <li>Duration: 2 years from the date of acceptance</li>
+                <li>Work Schedule: Full-time (40 hours/week)</li>
+                <li>Training: Mandatory completion of all assigned courses</li>
+                <li>Commitment: Full dedication to the role and responsibilities</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h2>Consequences of Early Termination</h2>
+            <ul>
+                <li>Financial penalties may apply for breaking the bond</li>
+                <li>Access to platform will be immediately revoked</li>
+                <li>Future employment opportunities may be affected</li>
+                <li>Legal action may be taken for breach of contract</li>
+            </ul>
+        </div>
+
+        <button onclick="acceptTerms()" class="accept-btn">
+            <i class="fas fa-check"></i> Accept Terms
+        </button>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+            
+            // Save theme preference
+            localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        function acceptTerms() {
+            // Save terms acceptance in localStorage
+            localStorage.setItem('termsAccepted', 'true');
+            // Redirect back to login page
+            window.location.href = 'tailors login.html';
+        }
+
+        // Check if terms are already accepted
+        document.addEventListener('DOMContentLoaded', function() {
+            const termsAccepted = localStorage.getItem('termsAccepted');
+            if (termsAccepted === 'true') {
+                // If terms are already accepted, redirect to login
+                window.location.href = 'tailors login.html';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Tailor Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 2rem;
+        }
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .user-name {
+            font-weight: 500;
+        }
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            background: #f5f5f5;
+            flex: 1;
+            width: 100%;
+            padding-bottom: 80px;
+        }
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .profile-avatar:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+        .profile-name {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .profile-email {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1.5rem;
+        }
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .profile-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .profile-section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            color: #3498db;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .profile-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .profile-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .profile-item i {
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+        .profile-item span {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: auto;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #3498db;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .recent-activity {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .activity-item:hover {
+            background: #e9ecef;
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .activity-details {
+            flex: 1;
+        }
+        .activity-title {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        #fileUpload {
+            display: none;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            padding: 1rem 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #95a5a6;
+            transition: color 0.3s;
+        }
+        .footer-item:hover {
+            color: #3498db;
+        }
+        .footer-item.active {
+            color: #3498db;
+        }
+        .footer-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .footer-item span {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">TERA</div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search orders, customers...">
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">T</div>
+            <span class="user-name">Tailor</span>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar" onclick="document.getElementById('fileUpload').click()">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h1 id="profileName">Loading...</h1>
+                <p class="profile-role">Tailor</p>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Orders</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">₹15K</div>
+                        <div class="stat-label">Saved</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title"><i class="fas fa-user-shield"></i> Account Security</h3>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <i class="fas fa-fingerprint"></i>
+                        <span>Biometric Login</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Two-Factor Auth</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-key"></i>
+                        <span>Password Manager</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-history"></i>
+                        <span>Login History</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title"><i class="fas fa-cog"></i> Preferences</h3>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <i class="fas fa-globe"></i>
+                        <span>Language</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-palette"></i>
+                        <span>Theme</span>
+                        <label class="theme-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Location</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title"><i class="fas fa-credit-card"></i> Payment & Billing</h3>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <i class="fas fa-wallet"></i>
+                        <span>Saved Cards</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-receipt"></i>
+                        <span>Billing History</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Rewards</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-percentage"></i>
+                        <span>Promotions</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title"><i class="fas fa-clock"></i> Recent Activity</h3>
+                <div class="recent-activity">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">New Order Placed</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Left a Review</div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Saved New Design</div>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title"><i class="fas fa-headset"></i> Support</h3>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help Center</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact Support</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Terms of Service</span>
+                    </div>
+                    <div class="profile-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <nav class="footer-nav">
+            <a href="index2.html" class="footer-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="bidding.html" class="footer-item">
+                <i class="fas fa-gavel"></i>
+                <span>Bidding</span>
+            </a>
+            <a href="accounts2.html" class="footer-item active">
+                <i class="fas fa-user"></i>
+                <span>Accounts</span>
+            </a>
+            <a href="dashboard.html" class="footer-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </nav>
+    </footer>
+
+    <script>
+        function editProfile() {
+            alert('Edit profile feature coming soon!');
+        }
+
+        function changePassword() {
+            alert('Change password feature coming soon!');
+        }
+
+        function updatePayment() {
+            alert('Update payment feature coming soon!');
+        }
+
+        function logout() {
+            window.location.href = 'index2.html';
+        }
+
+        // Display the tailor's name
+        document.addEventListener('DOMContentLoaded', function() {
+            const tailorName = localStorage.getItem('tailorName');
+            if (tailorName) {
+                document.getElementById('profileName').textContent = tailorName;
+            }
+        });
+    </script>
+</body>
+</html>

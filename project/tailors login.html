@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailor Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .dark-theme .login-container {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h1 {
+            color: #00bcd4;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .dark-theme .login-header h1 {
+            color: #00ffff;
+        }
+        .tailor-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tailor-option {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #00bcd4;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .tailor-option {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00ffff;
+        }
+        .tailor-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+        .tailor-option.active {
+            background: #00bcd4;
+            color: white;
+        }
+        .dark-theme .tailor-option.active {
+            background: #00ffff;
+            color: #000;
+        }
+        .tailor-option i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .dark-theme .form-group label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        .dark-theme .form-group input {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #00bcd4;
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+        .dark-theme .form-group input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .login-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+        .error-message {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .dark-theme .error-message {
+            color: #ff6666;
+        }
+        #loginForm {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .selected-type {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #00bcd4;
+            display: none;
+        }
+        .dark-theme .selected-type {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Tailor Login</h1>
+            <p>Choose your expertise level</p>
+        </div>
+
+        <div class="tailor-type">
+            <div class="tailor-option" onclick="selectTailorType('beginner')">
+                <i class="fas fa-user-graduate"></i>
+                <h3>Beginner</h3>
+                <p>New to tailoring</p>
+            </div>
+            <div class="tailor-option" onclick="selectTailorType('expert')">
+                <i class="fas fa-user-tie"></i>
+                <h3>Expert</h3>
+                <p>Professional tailor</p>
+            </div>
+        </div>
+
+        <div class="selected-type" id="selectedType">
+            <i class="fas fa-user"></i>
+            <span id="typeText"></span>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <p class="error-message" id="errorMessage">Invalid credentials</p>
+        </form>
+    </div>
+
+    <script>
+        let selectedTailorType = '';
+
+        function selectTailorType(type) {
+            selectedTailorType = type;
+            const options = document.querySelectorAll('.tailor-option');
+            options.forEach(option => {
+                option.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            if (type === 'beginner') {
+                // Always redirect to terms page for beginners
+                window.location.href = 'terms.html';
+                return;
+            }
+
+            // For experts, show the login form immediately
+            const selectedTypeDiv = document.getElementById('selectedType');
+            const typeText = document.getElementById('typeText');
+            selectedTypeDiv.style.display = 'block';
+            typeText.textContent = 'Expert Tailor Login';
+
+            // Show the login form
+            const loginForm = document.getElementById('loginForm');
+            loginForm.style.display = 'block';
+        }
+
+        // Check if returning from terms page
+        document.addEventListener('DOMContentLoaded', function() {
+            const termsAccepted = localStorage.getItem('termsAccepted');
+            if (termsAccepted === 'true') {
+                // Show beginner login form
+                const selectedTypeDiv = document.getElementById('selectedType');
+                const typeText = document.getElementById('typeText');
+                selectedTypeDiv.style.display = 'block';
+                typeText.textContent = 'Beginner Tailor Login';
+
+                // Show the login form
+                const loginForm = document.getElementById('loginForm');
+                loginForm.style.display = 'block';
+
+                // Set beginner as selected
+                selectedTailorType = 'beginner';
+                document.querySelector('.tailor-option:first-child').classList.add('active');
+            }
+        });
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Store the email in localStorage
+            localStorage.setItem('tailorEmail', email);
+
+            // Redirect based on tailor type
+            if (selectedTailorType === 'beginner') {
+                window.location.href = 'beginer-dashboard.html';
+            } else {
+                window.location.href = 'assignment.html';
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const themeIcon = document.querySelector('.theme-toggle i');
+            if (document.body.classList.contains('dark-theme')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+    </script>
+</body>
+</html>

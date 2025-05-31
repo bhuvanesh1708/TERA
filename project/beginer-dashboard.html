@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Beginner Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 70px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .header {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .welcome-text h1 {
+            color: #00bcd4;
+            font-size: 1.8em;
+        }
+        .dark-theme .welcome-text h1 {
+            color: #00ffff;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .terms-link {
+            color: #00bcd4;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .terms-link {
+            color: #00ffff;
+        }
+        .terms-link:hover {
+            transform: translateY(-2px);
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .dark-theme .dashboard-card {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-header i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #00bcd4;
+        }
+        .dark-theme .card-header i {
+            color: #00ffff;
+        }
+        .card-header h2 {
+            font-size: 1.4em;
+            color: #333;
+        }
+        .dark-theme .card-header h2 {
+            color: #fff;
+        }
+        .card-content {
+            margin-top: 15px;
+        }
+        .course-item, .assignment-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: rgba(0, 188, 212, 0.1);
+            transition: all 0.3s ease;
+        }
+        .dark-theme .course-item, .dark-theme .assignment-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .course-item:hover, .assignment-item:hover {
+            background: rgba(0, 188, 212, 0.2);
+            transform: translateX(5px);
+        }
+        .dark-theme .course-item:hover, .dark-theme .assignment-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .account-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 188, 212, 0.2);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: visible;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00bcd4;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .dark-theme .progress-fill {
+            background: #00ffff;
+        }
+        .progress-percentage {
+            position: absolute;
+            right: 0;
+            top: -20px;
+            font-size: 14px;
+            color: #00bcd4;
+            font-weight: bold;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2px 6px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .progress-percentage {
+            color: #00ffff;
+            background: rgba(13, 13, 13, 0.9);
+        }
+        .course-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: rgba(0, 188, 212, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .dark-theme .course-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .course-item:hover {
+            background: rgba(0, 188, 212, 0.2);
+            transform: translateX(5px);
+        }
+        .dark-theme .course-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .account-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 188, 212, 0.2);
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00bcd4;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .dark-theme .progress-fill {
+            background: #00ffff;
+        }
+
+        /* Footer Styles */
+        .footer-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            color: #666;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .footer-navbar {
+            background: rgba(13, 13, 13, 0.95);
+        }
+
+        .footer-item {
+            text-align: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dark-theme .footer-item {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-item i {
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-item:hover {
+            color: #00bcd4;
+            transform: translateY(-2px);
+        }
+
+        .dark-theme .footer-item:hover {
+            color: #00ffff;
+        }
+
+        .footer-item.active {
+            color: #00bcd4;
+        }
+
+        .dark-theme .footer-item.active {
+            color: #00ffff;
+        }
+
+        .footer-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: #00bcd4;
+            border-radius: 50%;
+        }
+
+        .dark-theme .footer-item.active::after {
+            background: #00ffff;
+        }
+
+        .footer-item:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Section visibility */
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        /* Terms and Conditions Modal */
+        .terms-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .terms-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .dark-theme .terms-content {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .terms-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #00bcd4;
+        }
+
+        .dark-theme .terms-header {
+            border-bottom-color: #00ffff;
+        }
+
+        .terms-header h2 {
+            color: #00bcd4;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .dark-theme .terms-header h2 {
+            color: #00ffff;
+        }
+
+        .terms-body {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .terms-body h3 {
+            color: #00bcd4;
+            margin: 20px 0 10px;
+        }
+
+        .dark-theme .terms-body h3 {
+            color: #00ffff;
+        }
+
+        .terms-body ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .terms-body li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .terms-body li:before {
+            content: "•";
+            color: #00bcd4;
+            position: absolute;
+            left: -20px;
+        }
+
+        .dark-theme .terms-body li:before {
+            color: #00ffff;
+        }
+
+        .terms-warning {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 188, 212, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #00bcd4;
+        }
+
+        .dark-theme .terms-warning {
+            background: rgba(0, 255, 255, 0.1);
+            border-left-color: #00ffff;
+        }
+
+        .terms-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .terms-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .accept-btn {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+        }
+
+        .dark-theme .accept-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+
+        .decline-btn {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .dark-theme .decline-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .terms-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+
+        /* Add padding to main content to prevent footer overlap */
+        .dashboard-container {
+            padding-bottom: 70px;
+        }
+    </style>
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+            
+            // Save theme preference
+            localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        // Set user name from localStorage
+        const userName = localStorage.getItem('tailorName');
+        if (userName) {
+            document.getElementById('userName').textContent = userName;
+        }
+
+        // Section navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(`${sectionName}-section`).classList.add('active');
+            
+            // Update footer active state
+            document.querySelectorAll('.footer-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Terms and Conditions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if terms have been accepted
+            const termsAccepted = localStorage.getItem('termsAccepted');
+            if (!termsAccepted) {
+                document.getElementById('termsModal').style.display = 'block';
+            }
+        });
+
+        function acceptTerms() {
+            localStorage.setItem('termsAccepted', 'true');
+            document.getElementById('termsModal').style.display = 'none';
+        }
+
+        function declineTerms() {
+            // Redirect back to login page
+            window.location.href = 'tailors login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Terms and Conditions Modal -->
+    <div class="terms-modal" id="termsModal">
+        <div class="terms-content">
+            <div class="terms-header">
+                <h2>Employment Agreement</h2>
+                <p>2-Year Full-Time Employment Bond</p>
+            </div>
+            <div class="terms-body">
+                <h3>Important Notice</h3>
+                <p>This platform is exclusively for full-time workers who are committed to a minimum 2-year employment bond. By accepting these terms, you acknowledge and agree to the following conditions:</p>
+                
+                <h3>Employment Requirements</h3>
+                <ul>
+                    <li>You must be a full-time worker (40 hours per week minimum)</li>
+                    <li>You agree to a mandatory 2-year employment bond</li>
+                    <li>You must maintain professional conduct and work ethics</li>
+                    <li>You agree to complete all assigned training and courses</li>
+                    <li>You understand that early termination may result in penalties</li>
+                </ul>
+
+                <h3>Bond Agreement Details</h3>
+                <ul>
+                    <li>Duration: 2 years from the date of acceptance</li>
+                    <li>Work Schedule: Full-time (40 hours/week)</li>
+                    <li>Training: Mandatory completion of all assigned courses</li>
+                    <li>Commitment: Full dedication to the role and responsibilities</li>
+                </ul>
+
+                <h3>Consequences of Early Termination</h3>
+                <ul>
+                    <li>Financial penalties may apply for breaking the bond</li>
+                    <li>Access to platform will be immediately revoked</li>
+                    <li>Future employment opportunities may be affected</li>
+                    <li>Legal action may be taken for breach of contract</li>
+                </ul>
+
+                <div class="terms-warning">
+                    <p><strong>Note:</strong> This agreement is legally binding. Please read carefully before accepting.</p>
+                </div>
+            </div>
+            <div class="terms-actions">
+                <button class="terms-btn accept-btn" onclick="acceptTerms()">I Accept the Terms</button>
+                <button class="terms-btn decline-btn" onclick="declineTerms()">I Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="welcome-text">
+                <h1>Welcome, <span id="userName">Tailor</span>!</h1>
+                <p>Beginner Dashboard</p>
+            </div>
+            <div class="header-actions">
+                <a href="terms.html" class="terms-link">
+                    <i class="fas fa-file-contract"></i>
+                    Terms
+                </a>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses Section -->
+        <div class="dashboard-section active" id="courses-section">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>Courses</h2>
+                </div>
+                <div class="card-content">
+                    <div class="course-item">
+                        <h3>Basic Tailoring</h3>
+                        <p>Learn fundamental tailoring techniques</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                            <span class="progress-percentage">60%</span>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <h3>Pattern Making</h3>
+                        <p>Introduction to pattern making</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                            <span class="progress-percentage">30%</span>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <h3>Fabric Selection</h3>
+                        <p>Understanding different fabrics</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%"></div>
+                            <span class="progress-percentage">15%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments Section -->
+        <div class="dashboard-section" id="assignments-section">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Assignments</h2>
+                </div>
+                <div class="card-content">
+                    <div class="assignment-item">
+                        <h3>Basic Stitching Practice</h3>
+                        <p>Due: 2 days left</p>
+                    </div>
+                    <div class="assignment-item">
+                        <h3>Pattern Drafting Exercise</h3>
+                        <p>Due: 5 days left</p>
+                    </div>
+                    <div class="assignment-item">
+                        <h3>Fabric Analysis Report</h3>
+                        <p>Due: 1 week left</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Section -->
+        <div class="dashboard-section" id="account-section">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Account</h2>
+                </div>
+                <div class="card-content">
+                    <div class="account-info">
+                        <div class="account-item">
+                            <span>Level</span>
+                            <span>Beginner</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Courses Completed</span>
+                            <span>2/6</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Points Earned</span>
+                            <span>450</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Next Level</span>
+                            <span>Intermediate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="footer-navbar">
+        <a href="#" class="footer-item active" onclick="showSection('courses')">
+            <i class="fas fa-book"></i>
+            <span>Courses</span>
+        </a>
+        <a href="#" class="footer-item" onclick="showSection('assignments')">
+            <i class="fas fa-tasks"></i>
+            <span>Assignments</span>
+        </a>
+        <a href="#" class="footer-item" onclick="showSection('account')">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+    </nav>
+</body>
+</html>

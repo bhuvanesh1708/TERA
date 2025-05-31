@@ -1,0 +1,15 @@
+Login attempt: 2025-04-22 10:26:00
+POST data: Array
+(
+    [email] => jyothisaipriyasuggula@gmail.com
+    [password] => khjxbh
+)
+
+Error: User not found
+Login attempt: 2025-04-22 10:26:58
+POST data: Array
+(
+    [email] => test@example.com
+    [password] => test123
+)
+

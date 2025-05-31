@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Nearby Tailors</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            margin-bottom: 80px;
+            margin-top: 80px;
+        }
+
+        /* Header Section */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .dark-theme .header {
+            background: rgba(13, 13, 13, 0.95);
+        }
+
+        .header h1 {
+            color: #00bcd4;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+
+        .dark-theme .header h1 {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-theme .search-section {
+            background: rgba(13, 13, 13, 0.95);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .search-input:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+            outline: none;
+        }
+
+        .dark-theme .search-input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 100%;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+
+        .dark-theme .search-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+
+        .search-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+
+        /* Map Section */
+        .map-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-theme .map-section {
+            background: rgba(13, 13, 13, 0.95);
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Tailors List */
+        .tailor-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-theme .tailor-card {
+            background: rgba(13, 13, 13, 0.95);
+        }
+
+        .tailor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 188, 212, 0.15);
+        }
+
+        .tailor-info h3 {
+            color: #00bcd4;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+
+        .dark-theme .tailor-info h3 {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        .tailor-details p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .dark-theme .tailor-details p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            flex: 1;
+            font-size: 1em;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+
+        .dark-theme .action-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #333;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .filter-select {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .filter-select:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+            outline: none;
+        }
+
+        .dark-theme .filter-select:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        /* Sorting Controls */
+        .sort-controls {
+            display: none;
+        }
+
+        .sort-btn {
+            display: none;
+        }
+
+        .footer-navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-around;
+            padding: 10px 0;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .footer-navbar {
+            background: rgba(13, 13, 13, 0.95);
+    }
+    .footer-item {
+      text-align: center;
+            color: #666;
+      text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .footer-item {
+            color: rgba(255, 255, 255, 0.7);
+    }
+    .footer-item i {
+      display: block;
+            font-size: 20px;
+      margin-bottom: 3px;
+            transition: all 0.3s ease;
+        }
+        .footer-item:hover {
+            color: #00bcd4;
+        }
+        .dark-theme .footer-item:hover {
+            color: #00ffff;
+        }
+        .footer-item.active {
+            color: #00bcd4;
+        }
+        .dark-theme .footer-item.active {
+            color: #00ffff;
+        }
+        .category-navbar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            margin-top: 70px;
+            position: sticky;
+            top: 70px;
+            z-index: 900;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+  }
+
+        /* Chat Modal Styles */
+        .chat-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-theme .chat-container {
+            background: #1a1a1a;
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dark-theme .chat-header {
+            border-bottom-color: #333;
+        }
+
+        .chat-header h3 {
+            color: #00bcd4;
+            margin: 0;
+        }
+
+        .dark-theme .chat-header h3 {
+            color: #00ffff;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .dark-theme .close-btn {
+            color: #fff;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message.user {
+            background: #00bcd4;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .dark-theme .message.user {
+            background: #00ffff;
+        }
+
+        .message.tailor {
+            background: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        .dark-theme .message.tailor {
+            background: #333;
+            color: #fff;
+        }
+
+        .message .time {
+            font-size: 0.7em;
+            opacity: 0.7;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .dark-theme .chat-input {
+            border-top-color: #333;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .dark-theme .chat-input input {
+            background: #333;
+            border-color: #444;
+            color: #fff;
+        }
+
+        .chat-input button {
+            background: #00bcd4;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-theme .chat-input button {
+            background: #00ffff;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .tailor-section {
+            margin-bottom: 30px;
+        }
+
+        .expertise-container {
+            margin: 10px 0;
+        }
+
+        .expertise-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .expertise-tag {
+            background: rgba(0, 188, 212, 0.1);
+            color: #00bcd4;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .dark-theme .expertise-tag {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .tailor-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tailor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme .tailor-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Find Nearby Tailors</h1>
+            <p>Discover skilled tailors in your area</p>
+        </div>
+
+        <div class="search-section">
+            <input type="text" class="search-input" id="locationInput" placeholder="Enter your location">
+            <button class="search-btn" onclick="findNearbyTailors()">
+                <i class="fas fa-search"></i> Find Tailors
+            </button>
+
+            <div class="filters">
+                <select class="filter-select" id="expertiseFilter">
+                    <option value="">Expertise</option>
+                    <option value="Suits">Suits</option>
+                    <option value="Frocks">Frocks</option>
+                    <option value="Shirts">Shirts</option>
+                    <option value="T-Shirts">T-Shirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Lehengas">Lehengas</option>
+                    <option value="Blouses">Blouses</option>
+                    <option value="Jackets">Jackets</option>
+            
+                </select>
+                <select class="filter-select" id="serviceFilter">
+                    <option value="">Services</option>
+                    <option value="alterations">Alterations</option>
+                    <option value="custom">Custom Tailoring</option>
+                    <option value="repair">Repairs</option>
+                </select>
+                <select class="filter-select" id="distanceFilter">
+                    <option value="">Distance</option>
+                    <option value="1">Within 1 km</option>
+                    <option value="5">Within 5 km</option>
+                    <option value="10">Within 10 km</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="map-section">
+            <div id="map"></div>
+        </div>
+
+        <div id="tailorsList">
+            <!-- Sample Tailor Card -->
+            <div class="tailor-card">
+                <div class="tailor-info">
+                    <h3>Expert Tailors</h3>
+                    <div class="tailor-details">
+                        <p><i class="fas fa-map-marker-alt"></i> 2.5 km away</p>
+                        <p><i class="fas fa-clock"></i> Open: 9:00 AM - 8:00 PM</p>
+                        <p><i class="fas fa-tag"></i> Custom Tailoring, Alterations</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="startChat('Expert Tailors')">
+                            <i class="fas fa-comments"></i> Chat with Tailor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+ <footer class="footer">
+    <nav class="footer-navbar">
+        <a href="index.html" class="footer-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="design.html" class="footer-item"><i class="fas fa-pencil-ruler"></i><span>Design</span></a>
+        <a href="measurements.html" class="footer-item active"><i class="fas fa-ruler"></i><span>Measurements</span></a>
+        <a href="tailors.html" class="footer-item"><i class="fas fa-user-tie"></i><span>Tailors</span></a>
+        <a href="orders.html" class="footer-item"><i class="fas fa-shopping-cart"></i><span>Orders</span></a>
+        <a href="accounts.html" class="footer-item"><i class="fas fa-user"></i><span>Profile</span></a>
+  </nav>
+ </footer>
+
+
+    <script>
+        let map;
+        let markers = [];
+        let autocomplete;
+        let geocoder;
+        let allTailors = [];
+
+        function initMap() {
+            // Initialize geocoder
+            geocoder = new google.maps.Geocoder();
+
+            // Initialize autocomplete for location input
+            const locationInput = document.getElementById('locationInput');
+            autocomplete = new google.maps.places.Autocomplete(locationInput, {
+                types: ['geocode'],
+                componentRestrictions: { country: 'in' }
+            });
+
+            // Add listener for place selection
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+                updateMapWithLocation(place.geometry.location);
+            });
+
+            // Default coordinates (Hyderabad)
+            const defaultLocation = { lat: 17.385044, lng: 78.486671 };
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultLocation,
+                zoom: 13,
+                styles: [
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels",
+                        "stylers": [{"visibility": "off"}]
+                    }
+                ]
+            });
+
+            // Try to get user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        updateMapWithLocation(userLocation);
+                    },
+                    () => {
+                        console.log("Error: The Geolocation service failed.");
+                        updateMapWithLocation(defaultLocation);
+                    }
+                );
+            } else {
+                console.log("Error: Your browser doesn't support geolocation.");
+                updateMapWithLocation(defaultLocation);
+            }
+        }
+
+        function updateMapWithLocation(location) {
+            map.setCenter(location);
+            map.setZoom(13);
+            
+            // Clear existing markers
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            // Add user location marker
+            addMarker(location, 'Your Location', true);
+
+            // Find nearby tailors
+            findNearbyTailors(location);
+        }
+
+        function addMarker(position, title, isUser = false) {
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: title,
+                icon: isUser ? {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    scaledSize: new google.maps.Size(40, 40)
+                } : {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                    scaledSize: new google.maps.Size(30, 30)
+                }
+            });
+
+            // Add info window for markers
+            const infoWindow = new google.maps.InfoWindow({
+                content: title
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        }
+
+        function findNearbyTailors(location) {
+            // Get the selected location coordinates
+            let baseLocation;
+            if (location) {
+                baseLocation = {
+                    lat: location.lat(),
+                    lng: location.lng()
+                };
+            } else {
+                // Default to Hyderabad if no location selected
+                baseLocation = { lat: 17.385044, lng: 78.486671 };
+            }
+
+            // Generate tailor locations around the selected location
+            const generateTailorLocation = (index, isFar = false) => {
+                // Generate different positions in a circular pattern
+                const angle = (index * 45) * (Math.PI / 180); // 45 degrees apart
+                const distance = isFar ? 0.008 : 0.004; // Further or closer
+                return {
+                    lat: baseLocation.lat + (distance * Math.cos(angle)),
+                    lng: baseLocation.lng + (distance * Math.sin(angle))
+                };
+            };
+
+            // Calculate distance between two points
+            const calculateDistance = (lat1, lon1, lat2, lon2) => {
+                const R = 6371; // Earth's radius in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = 
+                    Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c;
+            };
+
+            // Sample tailor data with dynamic locations
+            const sampleTailors = [
+                {
+                    name: "Expert Tailors",
+                    position: generateTailorLocation(0),
+                    expertise: ["Suits", "Shirts", "Jackets"],
+                    service: "Custom Tailoring",
+                    address: "123 Fashion Street, " + getLocationName(baseLocation),
+                   
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(0).lat, generateTailorLocation(0).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Fashion Tailors",
+                    position: generateTailorLocation(1),
+                    expertise: ["Frocks", "Lehengas", "Blouses"],
+                    service: "Alterations",
+                    address: "456 Style Avenue, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(1).lat, generateTailorLocation(1).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Quick Stitch",
+                    position: generateTailorLocation(2),
+                    expertise: ["Pants", "Shirts", "T-Shirts"],
+                    service: "Repairs",
+                    address: "789 Tailor Lane, " + getLocationName(baseLocation),
+                   
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(2).lat, generateTailorLocation(2).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Perfect Fit",
+                    position: generateTailorLocation(3),
+                    expertise: ["Suits", "T-Shirts", "Pants"],
+                    service: "Alterations",
+                    address: "321 Stitch Road, " + getLocationName(baseLocation),
+                   
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(3).lat, generateTailorLocation(3).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Royal Stitches",
+                    position: generateTailorLocation(4, true),
+                    expertise: ["Lehengas", "Blouses", "Frocks"],
+                    service: "Custom Tailoring",
+                    address: "567 Royal Plaza, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(4, true).lat, generateTailorLocation(4, true).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Modern Tailors",
+                    position: generateTailorLocation(5, true),
+                    expertise: ["Jackets", "Suits", "Pants"],
+                    service: "Custom Tailoring",
+                    address: "890 Modern Street, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(5, true).lat, generateTailorLocation(5, true).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Heritage Tailors",
+                    position: generateTailorLocation(6, true),
+                    expertise: ["Traditional Wear", "Lehengas", "Blouses"],
+                    service: "Custom Tailoring",
+                    address: "234 Heritage Road, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(6, true).lat, generateTailorLocation(6, true).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Express Tailors",
+                    position: generateTailorLocation(7, true),
+                    expertise: ["Shirts", "T-Shirts", "Pants"],
+                    service: "Repairs",
+                    address: "345 Express Lane, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(7, true).lat, generateTailorLocation(7, true).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Elite Couture",
+                    position: generateTailorLocation(8, true),
+                    expertise: ["Suits", "Jackets", "Formal Wear"],
+                    service: "Custom Tailoring",
+                    address: "678 Elite Avenue, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(8, true).lat, generateTailorLocation(8, true).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Bridal Boutique",
+                    position: generateTailorLocation(9, true),
+                    expertise: ["Lehengas", "Bridal Wear", "Blouses"],
+                    service: "Custom Tailoring",
+                    address: "901 Bridal Street, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(9, true).lat, generateTailorLocation(9, true).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Casual Stitches",
+                    position: generateTailorLocation(10, true),
+                    expertise: ["T-Shirts", "Pants", "Casual Wear"],
+                    service: "Alterations",
+                    address: "432 Casual Lane, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(10, true).lat, generateTailorLocation(10, true).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Designer's Den",
+                    position: generateTailorLocation(11, true),
+                    expertise: ["Designer Wear", "Suits", "Lehengas"],
+                    service: "Custom Tailoring",
+                    address: "765 Designer Road, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(11, true).lat, generateTailorLocation(11, true).lng),
+                    isTeraExpert: true
+                },
+                {
+                    name: "Kids Corner",
+                    position: generateTailorLocation(12, true),
+                    expertise: ["Kids Wear", "School Uniforms", "Party Wear"],
+                    service: "Custom Tailoring",
+                    address: "543 Kids Street, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(12, true).lat, generateTailorLocation(12, true).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Uniform Hub",
+                    position: generateTailorLocation(13, true),
+                    expertise: ["School Uniforms", "Corporate Uniforms", "Sports Uniforms"],
+                    service: "Custom Tailoring",
+                    address: "876 Uniform Road, " + getLocationName(baseLocation),
+                    
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(13, true).lat, generateTailorLocation(13, true).lng),
+                    isTeraExpert: false
+                },
+                {
+                    name: "Party Wear Palace",
+                    position: generateTailorLocation(14, true),
+                    expertise: ["Party Wear", "Evening Gowns", "Cocktail Dresses"],
+                    service: "Custom Tailoring",
+                    address: "234 Party Street, " + getLocationName(baseLocation),
+                   
+                    distance: calculateDistance(baseLocation.lat, baseLocation.lng, generateTailorLocation(14, true).lat, generateTailorLocation(14, true).lng),
+                    isTeraExpert: true
+                }
+            ];
+
+            // Round distances to 1 decimal place
+            sampleTailors.forEach(tailor => {
+                tailor.distance = Math.round(tailor.distance * 10) / 10;
+            });
+
+            allTailors = sampleTailors;
+
+            // Clear existing list
+            document.getElementById('tailorsList').innerHTML = '';
+
+            // Clear existing markers
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            // Add user location marker
+            addMarker(baseLocation, 'Your Location', true);
+
+            // Add markers for each tailor
+            sampleTailors.forEach(tailor => {
+                addMarker(tailor.position, tailor.name);
+            });
+
+            // Get selected expertise from filter
+            const selectedExpertise = document.getElementById('expertiseFilter').value;
+            
+            if (selectedExpertise) {
+                // Filter tailors by expertise
+                const filteredTailors = sampleTailors.filter(tailor => 
+                    tailor.expertise.includes(selectedExpertise)
+                );
+
+                // Sort by distance
+                filteredTailors.sort((a, b) => a.distance - b.distance);
+
+                // Take at least 5 tailors, or all if less than 5
+                const displayTailors = filteredTailors.slice(0, Math.max(5, filteredTailors.length));
+
+                // Render filtered tailors
+                renderTailorSections(displayTailors);
+
+                // Update map markers visibility
+                updateMapMarkers(displayTailors.map(t => t.name));
+            } else {
+                // If no expertise selected, show all tailors but prioritize TERA experts
+                const sortedTailors = [...sampleTailors].sort((a, b) => {
+                    // First sort by TERA expert status
+                    if (a.isTeraExpert !== b.isTeraExpert) {
+                        return b.isTeraExpert ? 1 : -1;
+                    }
+                    // Then sort by distance
+                    return a.distance - b.distance;
+                });
+
+                // Render all tailors
+                renderTailorSections(sortedTailors);
+
+                // Update map markers visibility
+                updateMapMarkers(sortedTailors.map(t => t.name));
+            }
+        }
+
+        function updateMapMarkers(visibleTailorNames) {
+            markers.forEach(marker => {
+                const tailorName = marker.getTitle();
+                marker.setVisible(visibleTailorNames.includes(tailorName));
+            });
+        }
+
+        // Update the expertise filter options
+        document.addEventListener('DOMContentLoaded', function() {
+            const expertiseFilter = document.getElementById('expertiseFilter');
+            const expertiseOptions = [
+                "Suits", "Frocks", "Shirts", "T-Shirts", "Pants", "Lehengas", 
+                "Blouses", "Jackets", "Traditional Wear", "Bridal Wear", 
+                "Designer Wear", "Luxury Wear", "Sports Wear", "Kids Wear",
+                "Party Wear", "Western Wear", "Ethnic Wear", "Formal Wear"
+            ];
+
+            // Clear existing options except the first one
+            expertiseFilter.innerHTML = '<option value="">Select Expertise</option>';
+
+            // Add new options
+            expertiseOptions.forEach(expertise => {
+                const option = document.createElement('option');
+                option.value = expertise;
+                option.textContent = expertise;
+                expertiseFilter.appendChild(option);
+            });
+
+            // Add event listener for expertise filter
+            expertiseFilter.addEventListener('change', function() {
+                const selectedExpertise = this.value;
+                if (selectedExpertise) {
+                    findNearbyTailors();
+                }
+            });
+        });
+
+        // Update the search button click handler
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const locationInput = document.getElementById('locationInput');
+            if (locationInput.value) {
+                const place = autocomplete.getPlace();
+                if (place && place.geometry) {
+                    findNearbyTailors(place.geometry.location);
+                } else {
+                    alert('Please select a valid location from the suggestions');
+                }
+            } else {
+                alert('Please enter a location first');
+            }
+        });
+
+        // Update the filterTailors function
+        function filterTailors() {
+            const expertiseFilter = document.getElementById('expertiseFilter').value;
+            const serviceFilter = document.getElementById('serviceFilter').value;
+            const distanceFilter = document.getElementById('distanceFilter').value;
+
+            // Filter and sort tailors
+            let filteredTailors = allTailors.filter(tailor => {
+                let show = true;
+                if (serviceFilter && tailor.service.toLowerCase() !== serviceFilter.toLowerCase()) show = false;
+                if (distanceFilter && tailor.distance > parseFloat(distanceFilter)) show = false;
+                if (expertiseFilter && !tailor.expertise.includes(expertiseFilter)) show = false;
+                return show;
+            });
+
+            // Sort: TERA experts first, then by distance
+            filteredTailors.sort((a, b) => {
+                if (a.isTeraExpert !== b.isTeraExpert) {
+                    return b.isTeraExpert ? 1 : -1;
+                }
+                return a.distance - b.distance;
+            });
+
+            // If expertise is selected, ensure at least 5 tailors are shown
+            if (expertiseFilter && filteredTailors.length < 5) {
+                // Get more tailors with the selected expertise
+                const additionalTailors = allTailors
+                    .filter(t => t.expertise.includes(expertiseFilter) && !filteredTailors.includes(t))
+                    .sort((a, b) => a.distance - b.distance)
+                    .slice(0, 5 - filteredTailors.length);
+                
+                filteredTailors = [...filteredTailors, ...additionalTailors];
+            }
+
+            // Render both sections
+            document.getElementById('tailorsList').innerHTML = '';
+            renderTailorSections(filteredTailors);
+
+            // Update map markers visibility
+            updateMapMarkers(filteredTailors.map(t => t.name));
+        }
+
+        function renderTailorSections(tailors) {
+            const tailorsList = document.getElementById('tailorsList');
+            tailorsList.innerHTML = ''; // Clear existing content
+
+            // Create sections for different categories
+            const sections = {
+                teraExperts: {
+                    title: "TERA Expert Tailors",
+                    tailors: tailors.filter(t => t.isTeraExpert),
+                    color: "#00bcd4"
+                },
+                premium: {
+                    title: "Premium Tailors",
+                    tailors: tailors.filter(t => !t.isTeraExpert && t.expertise.some(e => 
+                        e.includes("Premium") || e.includes("Luxury") || e.includes("Designer"))),
+                    color: "#4CAF50"
+                },
+                traditional: {
+                    title: "Traditional & Heritage Tailors",
+                    tailors: tailors.filter(t => !t.isTeraExpert && t.expertise.some(e => 
+                        e.includes("Traditional") || e.includes("Heritage") || e.includes("Ethnic"))),
+                    color: "#FF9800"
+                },
+                general: {
+                    title: "Other Tailors",
+                    tailors: tailors.filter(t => !t.isTeraExpert && !t.expertise.some(e => 
+                        e.includes("Premium") || e.includes("Luxury") || e.includes("Designer") ||
+                        e.includes("Traditional") || e.includes("Heritage") || e.includes("Ethnic"))),
+                    color: "#607D8B"
+                }
+            };
+
+            // Render each section
+            Object.values(sections).forEach(section => {
+                if (section.tailors.length > 0) {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'tailor-section';
+                    sectionDiv.innerHTML = `
+                        <h2 style="color: ${section.color}; margin: 20px 0 15px 0; padding: 10px; 
+                            background: rgba(255, 255, 255, 0.9); border-radius: 10px; 
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            ${section.title} (${section.tailors.length})
+                        </h2>
+                    `;
+
+                    // Create a grid container for the cards
+                    const gridContainer = document.createElement('div');
+                    gridContainer.style.display = 'grid';
+                    gridContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                    gridContainer.style.gap = '20px';
+                    gridContainer.style.padding = '10px';
+
+                    // Add each tailor card to the grid
+                    section.tailors.forEach(tailor => {
+                        const card = createTailorCard(tailor);
+                        gridContainer.appendChild(card);
+                    });
+
+                    sectionDiv.appendChild(gridContainer);
+                    tailorsList.appendChild(sectionDiv);
+                }
+            });
+        }
+
+        function createTailorCard(tailor) {
+            const tailorCard = document.createElement('div');
+            tailorCard.className = 'tailor-card';
+            
+            // Create expertise tags
+            const expertiseTags = tailor.expertise.map(e => 
+                `<span class="expertise-tag">${e}</span>`
+            ).join('');
+
+            tailorCard.innerHTML = `
+                <div class="tailor-info">
+                    <h3>${tailor.name}</h3>
+                    <div class="tailor-details">
+                        <p><i class="fas fa-map-marker-alt"></i> ${tailor.distance} km away</p>
+                        <p><i class="fas fa-clock"></i> Open: 9:00 AM - 8:00 PM</p>
+                        <p><i class="fas fa-cut"></i> Service: ${tailor.service}</p>
+                        <div class="expertise-container">
+                            <p><i class="fas fa-tshirt"></i> Expertise:</p>
+                            <div class="expertise-tags">
+                                ${expertiseTags}
+                            </div>
+                        </div>
+                       
+                        <p><i class="fas fa-map"></i> ${tailor.address}</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="startChat('${tailor.name}')">
+                            <i class="fas fa-comments"></i> Chat with Tailor
+                        </button>
+                    </div>
+                </div>
+            `;
+            return tailorCard;
+        }
+
+        function startChat(tailorName) {
+            // Create chat modal
+            const chatModal = document.createElement('div');
+            chatModal.className = 'chat-modal';
+            chatModal.innerHTML = `
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h3>Chat with ${tailorName}</h3>
+                        <button class="close-btn" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message tailor">
+                            <p>Hello! How can I help you today?</p>
+                            <span class="time">Just now</span>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="Type your message..." id="chatInput">
+                        <button onclick="sendMessage('${tailorName}')">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(chatModal);
+        }
+
+        function sendMessage(tailorName) {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user';
+                messageDiv.innerHTML = `
+                    <p>${message}</p>
+                    <span class="time">Just now</span>
+                `;
+                chatMessages.appendChild(messageDiv);
+                input.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate tailor response
+                setTimeout(() => {
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = 'message tailor';
+                    responseDiv.innerHTML = `
+                        <p>Thank you for your message. I'll get back to you shortly.</p>
+                        <span class="time">Just now</span>
+                    `;
+                    chatMessages.appendChild(responseDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        // Add a function to handle directions
+        function getDirections(address) {
+            const encodedAddress = encodeURIComponent(address);
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+        }
+
+        // Function to get location name from coordinates
+        function getLocationName(location) {
+            return new Promise((resolve) => {
+                geocoder.geocode({ location: location }, (results, status) => {
+                    if (status === 'OK' && results[0]) {
+                        resolve(results[0].formatted_address.split(',')[0]);
+                    } else {
+                        resolve('Hyderabad'); // Default to Hyderabad if geocoding fails
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- Replace YOUR_API_KEY with a valid Google Maps API key -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&libraries=places&callback=initMap">
+    </script>
+</body>
+</html>

@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Tailor Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            margin-bottom: 5rem;
+        }
+
+        .welcome-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .welcome-section h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .new-orders {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-all {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .order-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .order-card {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .order-card.pending {
+            border-left-color: #f1c40f;
+        }
+
+        .order-card.completed {
+            border-left-color: #2ecc71;
+        }
+
+        .order-card.in-progress {
+            border-left-color: #3498db;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-type {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .order-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .order-details {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .order-details i {
+            margin-right: 0.5rem;
+            color: #3498db;
+        }
+
+        .designs-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .design-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .design-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .design-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .design-info {
+            padding: 1rem;
+        }
+
+        .design-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .design-description {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .design-price {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .view-design {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .view-design:hover {
+            background-color: #2980b9;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .design-modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .design-modal-image {
+            width: 100%;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .design-modal-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            padding: 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .design-gallery {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .gallery-thumbnail {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+        }
+
+        .gallery-thumbnail:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .gallery-thumbnail.active {
+            border-color: #3498db;
+        }
+
+        .design-modal-info {
+            display: none;
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .design-modal-info.show {
+            display: block;
+        }
+
+        .design-modal-price {
+            font-size: 2rem;
+            color: #3498db;
+            font-weight: bold;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .design-modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .design-modal-actions button {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .primary-action {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .primary-action:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .secondary-action {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .secondary-action:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            padding: 1rem 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #95a5a6;
+            transition: color 0.3s;
+        }
+
+        .footer-item:hover {
+            color: #3498db;
+        }
+
+        .footer-item.active {
+            color: #3498db;
+        }
+
+        .footer-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-item span {
+            font-size: 0.8rem;
+        }
+
+        /* Stats Modal Styles */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .stats-modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-list {
+            margin-top: 1.5rem;
+        }
+
+        .stats-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .stats-item:hover {
+            transform: translateX(5px);
+        }
+
+        .stats-item-info {
+            flex: 1;
+        }
+
+        .stats-item-info p {
+            margin: 0.25rem 0;
+            color: #666;
+        }
+
+        .stats-item-info i {
+            margin-right: 0.5rem;
+            color: #3498db;
+        }
+
+        .stats-item-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rating-stars {
+            color: #f1c40f;
+        }
+
+        .rating-comment {
+            font-style: italic;
+            color: #666;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .theme-toggle:hover {
+            color: #3498db;
+        }
+
+        .notifications {
+            position: relative;
+        }
+
+        .notifications i {
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .notifications:hover .notification-count {
+            display: block;
+        }
+
+        .notification-count {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">TERA</div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search orders, customers...">
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">T</div>
+            <span class="user-name">Tailor</span>
+        </div>
+        <div class="nav-icons">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+            <i class="fas fa-bell" onclick="toggleNotifications()"></i>
+            <i class="fas fa-sign-out-alt" onclick="logout()"></i>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h1>Welcome back, Tailor!</h1>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>New Orders</h3>
+                    <p>5</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>In Progress</h3>
+                    <p>3</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Completed</h3>
+                    <p>12</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Rating</h3>
+                    <p>4.8</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="new-orders">
+            <div class="section-title">
+                <h2>New Orders</h2>
+                <a href="dashboard.html" class="view-all">View All Orders</a>
+            </div>
+            <div class="order-list">
+                <div class="order-card pending">
+                    <div class="order-header">
+                        <div class="order-type">Classic Suit</div>
+                        <div class="order-status status-pending">Pending</div>
+                    </div>
+                    <div class="order-details">
+                        <p><i class="fas fa-user"></i> John Doe</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Main St, 2km away</p>
+                        <p><i class="fas fa-calendar"></i> Ordered: Apr 2, 2024</p>
+                    </div>
+                </div>
+                <div class="order-card in-progress">
+                    <div class="order-header">
+                        <div class="order-type">Wedding Dress</div>
+                        <div class="order-status status-in-progress">In Progress</div>
+                    </div>
+                    <div class="order-details">
+                        <p><i class="fas fa-user"></i> Jane Smith</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 456 Oak Ave, 3km away</p>
+                        <p><i class="fas fa-calendar"></i> Ordered: Apr 1, 2024</p>
+                    </div>
+                </div>
+                <div class="order-card completed">
+                    <div class="order-header">
+                        <div class="order-type">Blazer</div>
+                        <div class="order-status status-completed">Completed</div>
+                    </div>
+                    <div class="order-details">
+                        <p><i class="fas fa-user"></i> Mike Johnson</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 789 Pine Rd, 1km away</p>
+                        <p><i class="fas fa-calendar"></i> Ordered: Mar 30, 2024</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="designs-section">
+            <div class="section-title">
+                <h2>Popular Designs</h2>
+                <a href="#" class="view-all">View All Designs</a>
+            </div>
+            <div class="design-grid">
+                <div class="design-card">
+                    <img src="../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png" alt="Classic Suit" class="design-image">
+                    <div class="design-info">
+                        <h3 class="design-title">Classic Suit</h3>
+                        <p class="design-description">A timeless three-piece suit perfect for formal occasions.</p>
+                        <div class="design-price">Starting from $299</div>
+                        <a href="#" class="view-design">View Design</a>
+                    </div>
+                </div>
+                <div class="design-card">
+                    <img src="../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png" alt="Wedding Dress" class="design-image">
+                    <div class="design-info">
+                        <h3 class="design-title">Wedding Dress</h3>
+                        <p class="design-description">Elegant bridal gown with intricate detailing.</p>
+                        <div class="design-price">Starting from $599</div>
+                        <a href="#" class="view-design">View Design</a>
+                    </div>
+                </div>
+                <div class="design-card">
+                    <img src="../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png" alt="Lehenga" class="design-image">
+                    <div class="design-info">
+                        <h3 class="design-title">Lehenga</h3>
+                        <p class="design-description">Traditional Indian attire with modern aesthetics.</p>
+                        <div class="design-price">Starting from $399</div>
+                        <a href="#" class="view-design">View Design</a>
+                    </div>
+                </div>
+                <div class="design-card">
+                    <img src="../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png" alt="Kurta Set" class="design-image">
+                    <div class="design-info">
+                        <h3 class="design-title">Kurta Set</h3>
+                        <p class="design-description">Comfortable and stylish ethnic wear.</p>
+                        <div class="design-price">Starting from $199</div>
+                        <a href="#" class="view-design">View Design</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <nav class="footer-nav">
+            <a href="index2.html" class="footer-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="bidding.html" class="footer-item">
+                <i class="fas fa-gavel"></i>
+                <span>Bidding</span>
+            </a>
+            <a href="accounts2.html" class="footer-item">
+                <i class="fas fa-user"></i>
+                <span>Accounts</span>
+            </a>
+            <a href="dashboard.html" class="footer-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </nav>
+    </footer>
+
+    <!-- Design Modal -->
+    <div id="designModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="modal-title" id="designModalTitle"></h2>
+            <div class="design-modal-content">
+                <div class="design-modal-image">
+                    <img id="designModalImage" src="" alt="Design Preview">
+                    <div class="design-gallery" id="designGallery"></div>
+                </div>
+                <div class="design-modal-info" id="designModalInfo">
+                    <div class="design-modal-price" id="designModalPrice"></div>
+                    <div class="design-modal-actions">
+                        <button class="primary-action" onclick="placeOrder()">Place Order</button>
+                        <button class="secondary-action" onclick="closeDesignModal()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Stats Modal -->
+    <div id="statsModal" class="stats-modal">
+        <div class="stats-modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="modal-title" id="statsModalTitle"></h2>
+            <div class="stats-list" id="statsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for orders and ratings
+        const orderData = {
+            newOrders: [
+                {
+                    customer: "John Doe",
+                    type: "Classic Suit",
+                    date: "Apr 2, 2024",
+                    location: "123 Main St, 2km away",
+                    status: "Pending"
+                },
+                {
+                    customer: "Sarah Wilson",
+                    type: "Lehenga",
+                    date: "Apr 2, 2024",
+                    location: "456 Oak Ave, 3km away",
+                    status: "Pending"
+                },
+                {
+                    customer: "David Brown",
+                    type: "Tuxedo",
+                    date: "Apr 2, 2024",
+                    location: "789 Pine Rd, 1km away",
+                    status: "Pending"
+                }
+            ],
+            inProgress: [
+                {
+                    customer: "Jane Smith",
+                    type: "Wedding Dress",
+                    date: "Apr 1, 2024",
+                    location: "456 Oak Ave, 3km away",
+                    status: "In Progress"
+                },
+                {
+                    customer: "Robert Taylor",
+                    type: "Kurta Set",
+                    date: "Apr 1, 2024",
+                    location: "321 Elm St, 4km away",
+                    status: "In Progress"
+                },
+                {
+                    customer: "Lisa Anderson",
+                    type: "Evening Gown",
+                    date: "Apr 1, 2024",
+                    location: "654 Maple Dr, 2km away",
+                    status: "In Progress"
+                }
+            ],
+            completed: [
+                {
+                    customer: "Mike Johnson",
+                    type: "Blazer",
+                    date: "Mar 30, 2024",
+                    location: "789 Pine Rd, 1km away",
+                    status: "Completed"
+                },
+                {
+                    customer: "Emma Davis",
+                    type: "Saree",
+                    date: "Mar 29, 2024",
+                    location: "987 Cedar Ln, 3km away",
+                    status: "Completed"
+                },
+                {
+                    customer: "James Wilson",
+                    type: "Sherwani",
+                    date: "Mar 28, 2024",
+                    location: "147 Birch Rd, 2km away",
+                    status: "Completed"
+                }
+            ],
+            ratings: [
+                {
+                    customer: "Mike Johnson",
+                    rating: 5,
+                    comment: "Excellent work on my blazer!",
+                    date: "Mar 30, 2024"
+                },
+                {
+                    customer: "Emma Davis",
+                    rating: 4,
+                    comment: "Beautiful saree, very satisfied.",
+                    date: "Mar 29, 2024"
+                },
+                {
+                    customer: "James Wilson",
+                    rating: 5,
+                    comment: "Perfect fit for my sherwani.",
+                    date: "Mar 28, 2024"
+                }
+            ]
+        };
+
+        // Design data with multiple images
+        const designData = {
+            'Classic Suit': {
+                images: [
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.12 AM.png'
+                ],
+                description: 'A timeless three-piece suit perfect for formal occasions. Made with premium wool blend fabric, featuring a modern slim fit and classic peak lapels.',
+                price: 'Starting from $299',
+                features: [
+                    'Premium wool blend fabric',
+                    'Modern slim fit',
+                    'Classic peak lapels',
+                    'Fully lined',
+                    'Hand-stitched details'
+                ]
+            },
+            'Wedding Dress': {
+                images: [
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.13 AM.png'
+                ],
+                description: 'Elegant bridal gown with intricate detailing. Features a flattering A-line silhouette with delicate lace appliqués and a flowing train.',
+                price: 'Starting from $599',
+                features: [
+                    'Luxurious silk fabric',
+                    'A-line silhouette',
+                    'Lace appliqués',
+                    'Flowing train',
+                    'Adjustable straps'
+                ]
+            },
+            'Lehenga': {
+                images: [
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.14 AM.png'
+                ],
+                description: 'Traditional Indian attire with modern aesthetics. Embellished with intricate embroidery and featuring a flared skirt with matching dupatta.',
+                price: 'Starting from $399',
+                features: [
+                    'Rich silk fabric',
+                    'Intricate embroidery',
+                    'Flared skirt',
+                    'Matching dupatta',
+                    'Customizable length'
+                ]
+            },
+            'Kurta Set': {
+                images: [
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png',
+                    '../assets/outlines/Screenshot 2025-04-02 at 10.38.15 AM.png'
+                ],
+                description: 'Comfortable and stylish ethnic wear. Made with breathable cotton fabric, featuring traditional embroidery and matching bottom.',
+                price: 'Starting from $199',
+                features: [
+                    'Breathable cotton',
+                    'Traditional embroidery',
+                    'Matching bottom',
+                    'Side slits',
+                    'Customizable fit'
+                ]
+            }
+        };
+
+        // Design modal elements
+        const designModal = document.getElementById('designModal');
+        const designModalTitle = document.getElementById('designModalTitle');
+        const designModalImage = document.getElementById('designModalImage');
+        const designModalDescription = document.getElementById('designModalDescription');
+        const designModalPrice = document.getElementById('designModalPrice');
+        const designModalFeatures = document.getElementById('designModalFeatures');
+        const designGallery = document.getElementById('designGallery');
+
+        // Stats modal elements
+        const statsModal = document.getElementById('statsModal');
+        const statsModalTitle = document.getElementById('statsModalTitle');
+        const statsList = document.getElementById('statsList');
+
+        // Add click event listeners to view design buttons
+        document.querySelectorAll('.view-design').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const designCard = button.closest('.design-card');
+                const designTitle = designCard.querySelector('.design-title').textContent;
+                showDesignDetails(designTitle);
+            });
+        });
+
+        function showDesignDetails(title) {
+            const design = designData[title];
+            if (!design) return;
+
+            designModalTitle.textContent = title;
+            designModalImage.src = design.images[0];
+            designModalPrice.textContent = design.price;
+            document.getElementById('designModalInfo').classList.remove('show');
+
+            // Clear and populate gallery
+            designGallery.innerHTML = '';
+            design.images.forEach((image, index) => {
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = `${title} - View ${index + 1}`;
+                img.className = 'gallery-thumbnail' + (index === 0 ? ' active' : '');
+                img.addEventListener('click', () => {
+                    designModalImage.src = image;
+                    document.querySelectorAll('.gallery-thumbnail').forEach(thumb => thumb.classList.remove('active'));
+                    img.classList.add('active');
+                    document.getElementById('designModalInfo').classList.add('show');
+                });
+                designGallery.appendChild(img);
+            });
+
+            designModal.style.display = 'block';
+        }
+
+        function closeDesignModal() {
+            designModal.style.display = 'none';
+            document.getElementById('designModalInfo').classList.remove('show');
+        }
+
+        function placeOrder() {
+            alert('Order placed successfully!');
+            closeDesignModal();
+        }
+
+        // Add click event listeners to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.querySelector('h3').textContent;
+                showStatsDetails(title);
+            });
+        });
+
+        function showStatsDetails(title) {
+            statsModalTitle.textContent = title;
+            statsList.innerHTML = '';
+
+            let items = [];
+            switch(title) {
+                case 'New Orders':
+                    items = orderData.newOrders;
+                    break;
+                case 'In Progress':
+                    items = orderData.inProgress;
+                    break;
+                case 'Completed':
+                    items = orderData.completed;
+                    break;
+                case 'Rating':
+                    items = orderData.ratings;
+                    break;
+            }
+
+            items.forEach(item => {
+                const statsItem = document.createElement('div');
+                statsItem.className = 'stats-item';
+
+                if (title === 'Rating') {
+                    statsItem.innerHTML = `
+                        <div class="stats-item-info">
+                            <p><i class="fas fa-user"></i> ${item.customer}</p>
+                            <div class="rating-stars">
+                                ${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}
+                            </div>
+                            <p class="rating-comment">${item.comment}</p>
+                            <p><i class="fas fa-calendar"></i> ${item.date}</p>
+                        </div>
+                    `;
+                } else {
+                    statsItem.innerHTML = `
+                        <div class="stats-item-info">
+                            <p><i class="fas fa-user"></i> ${item.customer}</p>
+                            <p><i class="fas fa-tshirt"></i> ${item.type}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${item.location}</p>
+                            <p><i class="fas fa-calendar"></i> ${item.date}</p>
+                        </div>
+                        <div class="stats-item-status status-${item.status.toLowerCase().replace(' ', '-')}">
+                            ${item.status}
+                        </div>
+                    `;
+                }
+
+                statsList.appendChild(statsItem);
+            });
+
+            statsModal.style.display = 'block';
+        }
+
+        function closeStatsModal() {
+            statsModal.style.display = 'none';
+        }
+
+        // Update close modal event listener to handle both modals
+        document.querySelectorAll('.close-modal').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                if (designModal.style.display === 'block') {
+                    closeDesignModal();
+                } else {
+                    closeStatsModal();
+                }
+            });
+        });
+
+        // Update window click event listener to handle both modals
+        window.addEventListener('click', (e) => {
+            if (e.target === designModal) {
+                closeDesignModal();
+            } else if (e.target === statsModal) {
+                closeStatsModal();
+            }
+        });
+
+        // Logout functionality
+        function logout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('tailorName');
+            localStorage.removeItem('tailorEmail');
+            
+            // Redirect to tailor login page
+            window.location.href = 'tailor-login.html';
+        }
+    </script>
+</body>
+</html>

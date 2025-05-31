@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Tailor Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .dark-theme .login-container {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h1 {
+            color: #00bcd4;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+        .dark-theme .login-header h1 {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+        .login-header p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .dark-theme .login-header p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .dark-theme .form-group label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(0, 188, 212, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .form-group input {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.2);
+            color: #fff;
+        }
+        .form-group input:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+            outline: none;
+        }
+        .dark-theme .form-group input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+        .login-button {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+            font-size: 1.1em;
+        }
+        .dark-theme .login-button {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .login-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+        .switch-login {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .switch-login a {
+            color: #00bcd4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .switch-login a {
+            color: #00ffff;
+        }
+        .switch-login a:hover {
+            text-decoration: underline;
+        }
+        .experience-selection {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            z-index: 1000;
+        }
+        .experience-selection h2 {
+            color: #00bcd4;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .dark-theme .experience-selection h2 {
+            color: #00ffff;
+        }
+        .experience-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .experience-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 20px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            font-size: 1.1em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .experience-btn i {
+            font-size: 1.5em;
+        }
+        .dark-theme .experience-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .experience-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+        .expert-notifications {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .dark-theme .expert-notifications {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .notification-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: rgba(0, 188, 212, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #00bcd4;
+        }
+        .dark-theme .notification-item {
+            background: rgba(0, 255, 255, 0.1);
+            border-left-color: #00ffff;
+        }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .notification-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .dark-theme .notification-title {
+            color: #fff;
+        }
+        .notification-time {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .dark-theme .notification-time {
+            color: #aaa;
+        }
+        .notification-content {
+            color: #666;
+        }
+        .dark-theme .notification-content {
+            color: #aaa;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .theme-toggle:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .header {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .welcome-text h1 {
+            color: #00bcd4;
+            font-size: 1.8em;
+        }
+        .dark-theme .welcome-text h1 {
+            color: #00ffff;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+        .dashboard-card.courses-card {
+            grid-column: 1 / -1;
+        }
+        .dashboard-card.assignments-card {
+            grid-column: 1;
+        }
+        .dashboard-card.account-card {
+            grid-column: 2;
+        }
+        .dark-theme .dashboard-card {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-header i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #00bcd4;
+        }
+        .dark-theme .card-header i {
+            color: #00ffff;
+        }
+        .card-header h2 {
+            font-size: 1.4em;
+            color: #333;
+        }
+        .dark-theme .card-header h2 {
+            color: #fff;
+        }
+        .card-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            .card-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        .course-item, .assignment-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: rgba(0, 188, 212, 0.1);
+            transition: all 0.3s ease;
+        }
+        @media (max-width: 480px) {
+            .course-item, .assignment-item {
+                padding: 12px;
+            }
+            .course-item h3 {
+                font-size: 1.1em;
+            }
+            .assignment-title {
+                font-size: 1em;
+            }
+        }
+        .dark-theme .course-item, .dark-theme .assignment-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .course-item:hover, .assignment-item:hover {
+            background: rgba(0, 188, 212, 0.2);
+            transform: translateX(5px);
+        }
+        .dark-theme .course-item:hover, .dark-theme .assignment-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        .account-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .account-item {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 188, 212, 0.2);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00bcd4;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .dark-theme .progress-fill {
+            background: #00ffff;
+        }
+        .course-level {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-bottom: 8px;
+        }
+        .level-beginner {
+            background: #4CAF50;
+            color: white;
+        }
+        .level-medium {
+            background: #FFC107;
+            color: black;
+        }
+        .level-expert {
+            background: #F44336;
+            color: white;
+        }
+        .start-learning-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+            .start-learning-btn {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+        .dark-theme .start-learning-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .start-learning-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+        }
+        .assignment-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: rgba(0, 188, 212, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #00bcd4;
+        }
+        .dark-theme .assignment-item {
+            background: rgba(0, 255, 255, 0.1);
+            border-left-color: #00ffff;
+        }
+        .assignment-item:hover {
+            background: rgba(0, 188, 212, 0.2);
+            transform: translateX(5px);
+        }
+        .dark-theme .assignment-item:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .assignment-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+        .dark-theme .assignment-title {
+            color: #fff;
+        }
+        .assignment-date {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .dark-theme .assignment-date {
+            color: #aaa;
+        }
+        .assignment-details {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 188, 212, 0.2);
+        }
+        .assignment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-top: 8px;
+        }
+        .status-completed {
+            background: #4CAF50;
+            color: white;
+        }
+        .status-pending {
+            background: #FFC107;
+            color: black;
+        }
+        .status-upcoming {
+            background: #2196F3;
+            color: white;
+        }
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .dark-theme .footer-nav {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        .dark-theme .nav-item {
+            color: #aaa;
+        }
+        .nav-item.active {
+            color: #00bcd4;
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .nav-item.active {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .nav-item i {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        .nav-item span {
+            font-size: 0.9em;
+        }
+        @media (max-width: 480px) {
+            .footer-nav {
+                padding: 8px;
+            }
+            .nav-item {
+                padding: 6px 12px;
+            }
+            .nav-item i {
+                font-size: 1.2em;
+            }
+            .nav-item span {
+                font-size: 0.8em;
+            }
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+            .login-header h1 {
+                font-size: 1.8em;
+            }
+            .form-group input {
+                padding: 10px;
+            }
+            .login-button {
+                padding: 12px 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .welcome-text h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Tailor Login</h1>
+            <p>Welcome back to TERA</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            
+            <button type="submit" class="login-button">Login</button>
+        </form>
+
+        <div class="experience-selection" id="experienceSelection">
+            <h2>Select Your Experience Level</h2>
+            <div class="experience-buttons">
+                <button class="experience-btn" onclick="selectExperience('beginner')">
+                    <i class="fas fa-user-graduate"></i>
+                    Beginner
+                </button>
+                <button class="experience-btn" onclick="selectExperience('expert')">
+                    <i class="fas fa-user-tie"></i>
+                    Expert
+                </button>
+            </div>
+        </div>
+        
+        <div class="switch-login">
+            <p>Are you a consumer? <a href="consumer-login.html">Login as Consumer</a></p>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="header">
+            <div class="welcome-text">
+                <h1>Welcome, <span id="userName">Tailor</span>!</h1>
+                <p>Beginner Dashboard</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- Expert Notifications Section -->
+        <div class="expert-notifications" id="expertNotifications">
+            <div class="card-header">
+                <i class="fas fa-bell"></i>
+                <h2>Notifications</h2>
+            </div>
+            <div class="notification-item">
+                <div class="notification-header">
+                    <span class="notification-title">New Client Request</span>
+                    <span class="notification-time">2 hours ago</span>
+                </div>
+                <div class="notification-content">
+                    John Doe requested a custom suit design. Please review the requirements.
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-header">
+                    <span class="notification-title">Appointment Reminder</span>
+                    <span class="notification-time">5 hours ago</span>
+                </div>
+                <div class="notification-content">
+                    You have a fitting appointment with Sarah Smith tomorrow at 2 PM.
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-header">
+                    <span class="notification-title">Order Update</span>
+                    <span class="notification-time">1 day ago</span>
+                </div>
+                <div class="notification-content">
+                    The fabric for your current order has been delivered to your workshop.
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Section -->
+        <div class="section active" id="coursesSection">
+            <div class="dashboard-card courses-card">
+                <div class="card-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>Courses</h2>
+                </div>
+                <div class="card-content">
+                    <!-- Beginner Level Courses -->
+                    <div class="course-item">
+                        <span class="course-level level-beginner">Beginner</span>
+                        <h3>Basic Tailoring</h3>
+                        <p>Learn fundamental tailoring techniques</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-beginner">Beginner</span>
+                        <h3>Pattern Making</h3>
+                        <p>Introduction to pattern making</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-beginner">Beginner</span>
+                        <h3>Fabric Selection</h3>
+                        <p>Understanding different fabrics</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+
+                    <!-- Medium Level Courses -->
+                    <div class="course-item">
+                        <span class="course-level level-medium">Medium</span>
+                        <h3>Advanced Stitching</h3>
+                        <p>Master complex stitching techniques</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-medium">Medium</span>
+                        <h3>Design Modification</h3>
+                        <p>Learn to modify existing patterns</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-medium">Medium</span>
+                        <h3>Fitting Techniques</h3>
+                        <p>Advanced fitting and alterations</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+
+                    <!-- Expert Level Courses -->
+                    <div class="course-item">
+                        <span class="course-level level-expert">Expert</span>
+                        <h3>Custom Design Creation</h3>
+                        <p>Create your own unique designs</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-expert">Expert</span>
+                        <h3>Master Tailoring</h3>
+                        <p>Advanced tailoring techniques</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                    <div class="course-item">
+                        <span class="course-level level-expert">Expert</span>
+                        <h3>Business Management</h3>
+                        <p>Run your tailoring business</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <a href="#" class="start-learning-btn">Start Learning</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview History Section -->
+        <div class="section" id="interviewsSection">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Interview History</h2>
+                </div>
+                <div class="card-content">
+                    <div class="assignment-item">
+                        <div class="assignment-header">
+                            <span class="assignment-title">Initial Assessment Interview</span>
+                            <span class="assignment-date">Completed: 2 days ago</span>
+                        </div>
+                        <div class="assignment-details">
+                            <p>Basic skills assessment and experience evaluation</p>
+                            <span class="assignment-status status-completed">Completed</span>
+                        </div>
+                    </div>
+                    <div class="assignment-item">
+                        <div class="assignment-header">
+                            <span class="assignment-title">Technical Skills Interview</span>
+                            <span class="assignment-date">Completed: 1 day ago</span>
+                        </div>
+                        <div class="assignment-details">
+                            <p>Evaluation of technical tailoring skills and knowledge</p>
+                            <span class="assignment-status status-completed">Completed</span>
+                        </div>
+                    </div>
+                    <div class="assignment-item">
+                        <div class="assignment-header">
+                            <span class="assignment-title">Pattern Making Assessment</span>
+                            <span class="assignment-date">Due: Tomorrow</span>
+                        </div>
+                        <div class="assignment-details">
+                            <p>Practical assessment of pattern making skills</p>
+                            <span class="assignment-status status-pending">Pending</span>
+                        </div>
+                    </div>
+                    <div class="assignment-item">
+                        <div class="assignment-header">
+                            <span class="assignment-title">Final Evaluation Interview</span>
+                            <span class="assignment-date">Scheduled: Next Week</span>
+                        </div>
+                        <div class="assignment-details">
+                            <p>Comprehensive evaluation of all learned skills</p>
+                            <span class="assignment-status status-upcoming">Upcoming</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Section -->
+        <div class="section" id="accountSection">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Account</h2>
+                </div>
+                <div class="card-content">
+                    <div class="account-info">
+                        <div class="account-item">
+                            <span>Level</span>
+                            <span>Beginner</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Courses Completed</span>
+                            <span>2/6</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Points Earned</span>
+                            <span>450</span>
+                        </div>
+                        <div class="account-item">
+                            <span>Next Level</span>
+                            <span>Intermediate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="footer-nav">
+            <a href="#" class="nav-item active" onclick="showSection('coursesSection')">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Courses</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('interviewsSection')">
+                <i class="fas fa-tasks"></i>
+                <span>Interviews</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('accountSection')">
+                <i class="fas fa-user-circle"></i>
+                <span>Account</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+            
+            // Save theme preference
+            localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Store the user's name in localStorage
+            localStorage.setItem('tailorName', name);
+            
+            // Hide login form and show experience selection
+            document.querySelector('.login-container').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            document.getElementById('experienceSelection').style.display = 'block';
+        });
+
+        function selectExperience(level) {
+            // Store the experience level
+            localStorage.setItem('tailorExperience', level);
+            
+            if (level === 'beginner') {
+                // Hide experience selection and expert notifications
+                document.getElementById('experienceSelection').style.display = 'none';
+                document.getElementById('expertNotifications').style.display = 'none';
+                
+                // Show beginner dashboard sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.style.display = 'block';
+                });
+                
+                // Set user name in dashboard
+                const userName = localStorage.getItem('tailorName');
+                document.getElementById('userName').textContent = userName;
+                
+                // Show the courses section by default
+                showSection('coursesSection');
+            } else {
+                // Hide experience selection
+                document.getElementById('experienceSelection').style.display = 'none';
+                
+                // Hide beginner sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Show expert notifications
+                document.getElementById('expertNotifications').style.display = 'block';
+                
+                // Set user name in dashboard
+                const userName = localStorage.getItem('tailorName');
+                document.getElementById('userName').textContent = userName;
+            }
+        }
+
+        // Section navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update navigation items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find and activate the clicked navigation item
+            const clickedNavItem = document.querySelector(.nav-item[onclick="showSection('${sectionId}')"]);
+            if (clickedNavItem) {
+                clickedNavItem.classList.add('active');
+            }
+        }
+
+        // Check if user is already logged in
+        window.addEventListener('load', function() {
+            const userName = localStorage.getItem('tailorName');
+            const experience = localStorage.getItem('tailorExperience');
+            
+            if (userName && experience === 'beginner') {
+                // User is logged in and is a beginner
+                document.querySelector('.login-container').style.display = 'none';
+                document.getElementById('dashboardContainer').style.display = 'block';
+                document.getElementById('experienceSelection').style.display = 'none';
+                document.getElementById('userName').textContent = userName;
+                showSection('coursesSection');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Design Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            color: #333;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+        body.dark-theme {
+            background: #0d0d0d;
+            color: #fff;
+        }
+        .main-content {
+            padding: 20px;
+            margin-bottom: 70px;
+            margin-top: 20px;
+        }
+        .design-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        .options-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+        .dark-theme .options-panel {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .section-title {
+            color: #00bcd4;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+        .dark-theme .section-title {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+        .clothing-type {
+            margin-bottom: 20px;
+        }
+        .clothing-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .option-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .option-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 255, 255, 0.1);
+        }
+        .option-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.15);
+        }
+        .option-item.active {
+            background: rgba(0, 188, 212, 0.1);
+            border: 1px solid #00bcd4;
+        }
+        .dark-theme .option-item.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+        }
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+        }
+        .color-option.active {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+        }
+        .dark-theme .color-option.active {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+        .design-canvas {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .dark-theme .design-canvas {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dark-theme .canvas-container {
+            background: #1a1a1a;
+        }
+        #designCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            background: #ffffff;
+            z-index: 1;
+        }
+        .dark-theme #designCanvas {
+            background: #1a1a1a;
+        }
+        .canvas-tools {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .tool-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .tool-btn {
+            background: rgba(13, 13, 13, 0.9);
+            color: #fff;
+        }
+        .tool-btn.active {
+            background: #00bcd4;
+            color: white;
+        }
+        .dark-theme .tool-btn.active {
+            background: #00ffff;
+        }
+        .tool-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+        }
+        .design-patterns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .pattern-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 188, 212, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .pattern-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 20px 20px;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        .pattern-item.floral::before {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10,5 C12,5 14,7 14,9 C14,11 12,13 10,13 C8,13 6,11 6,9 C6,7 8,5 10,5' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-item.geometric::before {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5,5 L15,5 L15,15 L5,15 Z' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-item.stripes::before {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='5' height='20' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-item.dots::before {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='2' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-item.embroidered::before {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10,5 C12,5 14,7 14,9 C14,11 12,13 10,13 C8,13 6,11 6,9 C6,7 8,5 10,5' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-item.active {
+            background: rgba(0, 188, 212, 0.1);
+            border: 1px solid #00bcd4;
+        }
+        .dark-theme .pattern-item.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+        }
+        .save-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .dark-theme .save-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .save-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+        }
+        .footer-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            color: #666;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .footer-navbar {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .footer-item {
+            text-align: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .footer-item {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .footer-item i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 3px;
+            transition: all 0.3s ease;
+        }
+        .footer-item:hover {
+            color: #00bcd4;
+        }
+        .dark-theme .footer-item:hover {
+            color: #00ffff;
+        }
+        .footer-item.active {
+            color: #00bcd4;
+        }
+        .dark-theme .footer-item.active {
+            color: #00ffff;
+        }
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #00bcd4;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark-theme .theme-toggle {
+            color: #00ffff;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(0, 188, 212, 0.1);
+        }
+        .dark-theme .theme-toggle:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .theme-toggle i {
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover i {
+            transform: rotate(180deg);
+        }
+        .clothing-outline {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            pointer-events: none;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .clothing-outline {
+            opacity: 0.4;
+        }
+        .outline-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dark-theme .outline-controls {
+            background: rgba(13, 13, 13, 0.95);
+        }
+        .outline-btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 188, 212, 0.2);
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: 200px;
+            justify-content: space-between;
+        }
+        .outline-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none;
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+        .outline-menu.show {
+            display: block;
+        }
+        .outline-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            color: #333;
+            margin: 2px 0;
+        }
+        .outline-option:hover {
+            background: rgba(0, 188, 212, 0.1);
+            color: #00bcd4;
+        }
+        .dark-theme .outline-option:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+        .outline-category {
+            padding: 8px 15px;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0, 188, 212, 0.1);
+            margin-bottom: 5px;
+        }
+        .dark-theme .outline-category {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 10px;
+        }
+        .size-control label {
+            color: #333;
+            font-size: 14px;
+        }
+        .dark-theme .size-control label {
+            color: #fff;
+        }
+        .size-slider {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+        }
+        .dark-theme .size-slider {
+            background: #444;
+        }
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00bcd4;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .size-slider::-webkit-slider-thumb {
+            background: #00ffff;
+        }
+        .size-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        .size-value {
+            color: #333;
+            font-size: 12px;
+            min-width: 40px;
+        }
+        .dark-theme .size-value {
+            color: #fff;
+        }
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .pattern-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .pattern-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .pattern-item.active {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+        }
+        .pattern-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .dress-preview {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .dress-preview img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .pattern-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: multiply;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            background-size: 100px 100px;
+            background-repeat: repeat;
+            pointer-events: none;
+        }
+        .floral-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50,20 C60,20 70,30 70,40 C70,50 60,60 50,60 C40,60 30,50 30,40 C30,30 40,20 50,20' fill='%2300bcd4'/%3E%3Cpath d='M50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50 C40,45 45,40 50,40' fill='%23ff69b4'/%3E%3C/svg%3E");
+        }
+        .stripes-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='20' height='100' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .dots-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='10' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .geometric-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='25' y='25' width='50' height='50' fill='%2300bcd4'/%3E%3C/svg%3E");
+        }
+        .pattern-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin: 0 20px;
+        }
+        .pattern-scale {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pattern-scale label {
+            min-width: 100px;
+        }
+        .pattern-scale input {
+            flex: 1;
+        }
+        .pattern-rotation {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .outline-options {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .dark-theme .outline-options {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .outline-style-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .outline-style {
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(0, 188, 212, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .outline-style:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.15);
+            border-color: #00bcd4;
+        }
+        .outline-style.active {
+            background: rgba(0, 188, 212, 0.1);
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
+        }
+        .outline-style.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #00bcd4;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .dark-theme .outline-style {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 255, 255, 0.1);
+        }
+        .dark-theme .outline-style:hover {
+            border-color: #00ffff;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.15);
+        }
+        .dark-theme .outline-style.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        .dark-theme .outline-style.active::after {
+            background: #00ffff;
+        }
+        .outline-style i {
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .outline-style:hover i {
+            transform: scale(1.1);
+            color: #00bcd4;
+        }
+        .dark-theme .outline-style:hover i {
+            color: #00ffff;
+        }
+        .outline-style.active i {
+            color: #00bcd4;
+            transform: scale(1.1);
+        }
+        .dark-theme .outline-style.active i {
+            color: #00ffff;
+        }
+        .outline-style .line-preview {
+            width: 60px;
+            height: 2px;
+            background: #333;
+            margin-left: 8px;
+            transition: all 0.3s ease;
+        }
+        .outline-style[data-style="dashed"] .line-preview {
+            border-top: 2px dashed #333;
+            background: none;
+        }
+        .outline-style[data-style="dotted"] .line-preview {
+            border-top: 2px dotted #333;
+            background: none;
+        }
+        .outline-style[data-style="double"] .line-preview {
+            border-top: 4px double #333;
+            background: none;
+        }
+        .outline-style:hover .line-preview {
+            transform: scaleX(1.1);
+        }
+        .outline-style.active .line-preview {
+            transform: scaleX(1.1);
+            opacity: 0.8;
+        }
+        .outline-thickness {
+            margin-top: 15px;
+        }
+        .thickness-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .thickness-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+        }
+        .dark-theme .thickness-slider {
+            background: #444;
+        }
+        .thickness-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00bcd4;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-theme .thickness-slider::-webkit-slider-thumb {
+            background: #00ffff;
+        }
+        .thickness-value {
+            min-width: 40px;
+            text-align: right;
+            color: #666;
+            font-size: 14px;
+        }
+        .dark-theme .thickness-value {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .upload-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .dark-theme .upload-btn {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+        }
+        #uploadInput {
+            display: none;
+        }
+        .upload-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        .dark-theme .upload-preview {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .preview-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .preview-btn.apply {
+            background: #00bcd4;
+            color: white;
+        }
+        .dark-theme .preview-btn.apply {
+            background: #00ffff;
+            color: #000;
+        }
+        .preview-btn.cancel {
+            background: #ff4444;
+            color: white;
+        }
+        .preview-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .time-limit-form {
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .time-limit-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(0, 188, 212, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300bcd4' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 12px;
+        }
+
+        .dark-theme .time-limit-select {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.2);
+            color: #fff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300ffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        }
+
+        .time-limit-select:focus {
+            border-color: #00bcd4;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+            outline: none;
+        }
+
+        .dark-theme .time-limit-select:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .time-limit-select:hover {
+            border-color: #00bcd4;
+        }
+
+        .dark-theme .time-limit-select:hover {
+            border-color: #00ffff;
+        }
+
+        .submit-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .submit-button {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .submit-button {
+            background: linear-gradient(90deg, #00ffff, #00bcd4);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        .submit-button i {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .submit-button:hover i {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="design-container">
+            <div class="canvas-container">
+                <div class="outline-controls">
+                    <button class="outline-btn" onclick="toggleOutlineMenu()">
+                        <i class="fas fa-tshirt"></i>
+                        <span id="selectedType">Select Design Type</span>
+                    </button>
+                    <div class="outline-menu" id="outlineMenu">
+                        <!-- Men's Wear -->
+                        <div class="outline-category">
+                            <i class="fas fa-male"></i>
+                            Men's Wear
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('suit')">
+                            <i class="fas fa-user-tie"></i>
+                            Classic Suit
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('tuxedo')">
+                            <i class="fas fa-user-tie"></i>
+                            Tuxedo
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('blazer')">
+                            <i class="fas fa-user-tie"></i>
+                            Blazer
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('waistcoat')">
+                            <i class="fas fa-user-tie"></i>
+                            Waistcoat
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('formal')">
+                            <i class="fas fa-user-tie"></i>
+                            Formal Suit
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('shirt')">
+                            <i class="fas fa-tshirt"></i>
+                            Shirt
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kurta')">
+                            <i class="fas fa-tshirt"></i>
+                            Kurta
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('sherwani')">
+                            <i class="fas fa-tshirt"></i>
+                            Sherwani
+                        </div>
+
+                        <!-- Women's Wear -->
+                        <div class="outline-category">
+                            <i class="fas fa-female"></i>
+                            Women's Wear
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('dress')">
+                            <i class="fas fa-female"></i>
+                            Dress
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('sheath')">
+                            <i class="fas fa-female"></i>
+                            Sheath Dress
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('lehenga')">
+                            <i class="fas fa-female"></i>
+                            Lehenga
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('saree')">
+                            <i class="fas fa-female"></i>
+                            Saree
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('salwar')">
+                            <i class="fas fa-female"></i>
+                            Salwar
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('gown')">
+                            <i class="fas fa-female"></i>
+                            Gown
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('frock')">
+                            <i class="fas fa-female"></i>
+                            Frock
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kurthi')">
+                            <i class="fas fa-female"></i>
+                            Kurthi
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('anarkali')">
+                            <i class="fas fa-female"></i>
+                            Anarkali
+                        </div>
+
+                        <!-- Children's Wear -->
+                        <div class="outline-category">
+                            <i class="fas fa-child"></i>
+                            Children's Wear
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kids_dress')">
+                            <i class="fas fa-child"></i>
+                            Kids Dress
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kids_suit')">
+                            <i class="fas fa-child"></i>
+                            Kids Suit
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kids_shirt')">
+                            <i class="fas fa-child"></i>
+                            Kids Shirt
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kids_pants')">
+                            <i class="fas fa-child"></i>
+                            Kids Pants
+                        </div>
+                        <div class="outline-option" onclick="selectClothingType('kids_frock')">
+                            <i class="fas fa-child"></i>
+                            Kids Frock
+                        </div>
+                    </div>
+                </div>
+                <div class="canvas-tools">
+                    <button class="tool-btn active" onclick="setTool('draw')">Draw</button>
+                    <button class="tool-btn" onclick="setTool('fill')">Fill</button>
+                    <button class="tool-btn" onclick="setTool('eraser')">Eraser</button>
+                    <button class="tool-btn" onclick="setTool('colorFill')">Color Fill</button>
+                    <div class="size-control">
+                        <label>Size:</label>
+                        <input type="range" min="1" max="50" value="5" onchange="updateSize(this.value)" class="size-slider">
+                        <span class="size-value">5px</span>
+                    </div>
+                </div>
+                <canvas id="designCanvas"></canvas>
+            </div>
+            <div class="options-panel">
+                <h3 class="section-title">Design Options</h3>
+                
+                <!-- Add Upload Design Button -->
+                <button class="upload-btn" onclick="document.getElementById('uploadInput').click()">
+                    <i class="fas fa-upload"></i>
+                    Upload Design
+                </button>
+                <input type="file" id="uploadInput" accept="image/*" onchange="handleImageUpload(event)">
+                
+                <!-- Upload Preview Section -->
+                <div class="upload-preview" id="uploadPreview">
+                    <h4 class="section-title">Preview</h4>
+                    <img id="previewImage" class="preview-image" src="" alt="Preview">
+                    <div class="preview-controls">
+                        <button class="preview-btn apply" onclick="applyUploadedImage()">Apply Design</button>
+                        <button class="preview-btn cancel" onclick="cancelUpload()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Add the new Outline Options section -->
+                <div class="outline-options">
+                    <h4 class="section-title">Outline Style</h4>
+                    <div class="outline-style-grid">
+                        <div class="outline-style" data-style="solid" onclick="updateOutlineStyle('solid')">
+                            <i class="fas fa-square"></i>
+                            <span>Solid</span>
+                            <div class="line-preview"></div>
+                        </div>
+                        <div class="outline-style" data-style="dashed" onclick="updateOutlineStyle('dashed')">
+                            <i class="fas fa-square"></i>
+                            <span>Dashed</span>
+                            <div class="line-preview"></div>
+                        </div>
+                        <div class="outline-style" data-style="dotted" onclick="updateOutlineStyle('dotted')">
+                            <i class="fas fa-circle"></i>
+                            <span>Dotted</span>
+                            <div class="line-preview"></div>
+                        </div>
+                        <div class="outline-style" data-style="double" onclick="updateOutlineStyle('double')">
+                            <i class="fas fa-square"></i>
+                            <span>Double</span>
+                            <div class="line-preview"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="outline-thickness">
+                        <h4 class="section-title">Outline Thickness</h4>
+                        <div class="thickness-control">
+                            <input type="range" class="thickness-slider" min="1" max="10" value="2">
+                            <span class="thickness-value">2px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Fabric Type</h3>
+                <div class="clothing-type">
+                    <div class="clothing-options">
+                        <div class="option-item active">Silk</div>
+                        <div class="option-item">Cotton</div>
+                        <div class="option-item">Wool</div>
+                        <div class="option-item">Linen</div>
+                        <div class="option-item">Velvet</div>
+                        <div class="option-item">Chiffon</div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Style</h3>
+                <div class="clothing-options">
+                    <div class="option-item active">Traditional</div>
+                    <div class="option-item">Modern</div>
+                    <div class="option-item">Fusion</div>
+                    <div class="option-item">Casual</div>
+                </div>
+
+                <h3 class="section-title">Color</h3>
+                <div class="color-palette">
+                    <div class="color-option" style="background: #ff0000;"></div>
+                    <div class="color-option" style="background: #00ff00;"></div>
+                    <div class="color-option" style="background: #0000ff;"></div>
+                    <div class="color-option" style="background: #ffff00;"></div>
+                    <div class="color-option" style="background: #ff00ff;"></div>
+                    <div class="color-option" style="background: #00ffff;"></div>
+                    <div class="color-option" style="background: #ffffff;"></div>
+                    <div class="color-option" style="background: #000000;"></div>
+                    <div class="color-option" style="background: #ffa500;"></div>
+                    <div class="color-option" style="background: #800080;"></div>
+                </div>
+
+                <h3 class="section-title">Patterns</h3>
+                <div class="design-patterns">
+                    <div class="pattern-item">Floral</div>
+                    <div class="pattern-item">Geometric</div>
+                    <div class="pattern-item">Stripes</div>
+                    <div class="pattern-item">Dots</div>
+                    <div class="pattern-item">Solid</div>
+                    <div class="pattern-item">Embroidered</div>
+                </div>
+
+                <h3 class="section-title">Time Limit</h3>
+                <div class="time-limit-form">
+                    <select id="timeLimit" class="time-limit-select" onchange="updateTimeLimit(this.value)">
+                        <option value="">Select Time Limit</option>
+                        <option value="1">1 Day</option>
+                        <option value="2">2 Days</option>
+                        <option value="3">3 Days</option>
+                        <option value="4">4 Days</option>
+                        <option value="5">5 Days</option>
+                        <option value="6">6 Days</option>
+                        <option value="7">7 Days</option>
+                        <option value="8">8 Days</option>
+                        <option value="9">9 Days</option>
+                        <option value="10">10 Days</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="submit-container">
+        <button class="submit-button" onclick="submitDesign()">
+            <i class="fas fa-paper-plane"></i>
+            Submit Design
+        </button>
+    </div>
+
+    <nav class="footer-navbar">
+        <a href="index.html" class="footer-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="design.html" class="footer-item active"><i class="fas fa-pencil-ruler"></i><span>Design</span></a>
+        <a href="measurements.html" class="footer-item"><i class="fas fa-ruler"></i><span>Measurements</span></a>
+        <a href="tailors.html" class="footer-item"><i class="fas fa-user-tie"></i><span>Tailors</span></a>
+        <a href="orders.html" class="footer-item"><i class="fas fa-shopping-cart"></i><span>cart</span></a>
+        <a href="accounts.html" class="footer-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <div class="pattern-grid">
+        <!-- Patterns will be loaded dynamically -->
+    </div>
+
+    <script>
+        // Drawing variables
+        let isDrawing = false;
+        let currentTool = 'draw';
+        let currentColor = '#00bcd4';
+        let currentPattern = 'solid';
+        let currentSize = 5;
+        let lastX = 0;
+        let lastY = 0;
+        let currentFabric = 'silk';
+        let currentStyle = 'traditional';
+
+        // Add these new functions for pattern handling
+        let selectedPattern = null;
+        let selectedDress = null;
+
+        // Add this variable at the top with other global variables
+        let currentOutlineStyle = 'solid';
+
+        // Add these variables at the top with other global variables
+        let drawingLayer = null;
+        let backgroundLayer = null;
+
+        // Initialize canvas
+        window.onload = function() {
+            initCanvas();
+            setupToolListeners();
+            setupColorListeners();
+            setupPatternListeners();
+            setupFabricListeners();
+            setupStyleListeners();
+            loadPatterns();
+        };
+
+        function initCanvas() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match container
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Create drawing layer
+            drawingLayer = document.createElement('canvas');
+            drawingLayer.width = canvas.width;
+            drawingLayer.height = canvas.height;
+            
+            // Create background layer
+            backgroundLayer = document.createElement('canvas');
+            backgroundLayer.width = canvas.width;
+            backgroundLayer.height = canvas.height;
+            
+            // Set initial styles
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Add event listeners
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                drawingLayer.width = canvas.width;
+                drawingLayer.height = canvas.height;
+                backgroundLayer.width = canvas.width;
+                backgroundLayer.height = canvas.height;
+                redrawCanvas();
+            });
+        }
+
+        function redrawCanvas() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear the main canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background layer (clothing outline) first
+            ctx.drawImage(backgroundLayer, 0, 0);
+            
+            // Draw drawing layer (user's drawings) on top
+            ctx.drawImage(drawingLayer, 0, 0);
+        }
+
+        function setupToolListeners() {
+            const tools = document.querySelectorAll('.tool-btn');
+            tools.forEach(tool => {
+                tool.addEventListener('click', () => {
+                    tools.forEach(t => t.classList.remove('active'));
+                    tool.classList.add('active');
+                    currentTool = tool.textContent.toLowerCase();
+                });
+            });
+        }
+
+        function setupColorListeners() {
+            const colors = document.querySelectorAll('.color-option');
+            colors.forEach(color => {
+                color.addEventListener('click', () => {
+                    colors.forEach(c => c.classList.remove('active'));
+                    color.classList.add('active');
+                    currentColor = color.style.background;
+                    
+                    // Update canvas color
+                    const ctx = document.getElementById('designCanvas').getContext('2d');
+                    ctx.strokeStyle = currentColor;
+                });
+            });
+        }
+
+        function setupPatternListeners() {
+            const patterns = document.querySelectorAll('.pattern-item');
+            patterns.forEach(pattern => {
+                pattern.addEventListener('click', () => {
+                    patterns.forEach(p => p.classList.remove('active'));
+                    pattern.classList.add('active');
+                    currentPattern = pattern.textContent.toLowerCase();
+                    
+                    // Update the drawing tool to use the selected pattern
+                    setTool('draw');
+                });
+            });
+        }
+
+        function setupFabricListeners() {
+            const fabricOptions = document.querySelectorAll('.clothing-type .option-item');
+            fabricOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    fabricOptions.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    currentFabric = option.textContent.toLowerCase();
+                    updateFabricTexture();
+                });
+            });
+        }
+
+        function setupStyleListeners() {
+            const styleOptions = document.querySelectorAll('.clothing-options .option-item');
+            styleOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Only update if it's a style option (not a fabric option)
+                    if (option.closest('.clothing-type') === null) {
+                        styleOptions.forEach(opt => opt.classList.remove('active'));
+                        option.classList.add('active');
+                        currentStyle = option.textContent.toLowerCase();
+                        updateStyle();
+                    }
+                });
+            });
+        }
+
+        function updateFabricTexture() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create a pattern based on the selected fabric
+            const patternCanvas = document.createElement('canvas');
+            patternCanvas.width = 20;
+            patternCanvas.height = 20;
+            const patternCtx = patternCanvas.getContext('2d');
+            
+            patternCtx.fillStyle = currentColor;
+            
+            switch(currentFabric) {
+                case 'silk':
+                    // Smooth, flowing pattern
+                    patternCtx.beginPath();
+                    patternCtx.moveTo(0, 10);
+                    patternCtx.quadraticCurveTo(10, 0, 20, 10);
+                    patternCtx.stroke();
+                    break;
+                case 'cotton':
+                    // Woven texture
+                    patternCtx.fillRect(0, 0, 5, 5);
+                    patternCtx.fillRect(10, 10, 5, 5);
+                    break;
+                case 'wool':
+                    // Knitted texture
+                    patternCtx.beginPath();
+                    patternCtx.arc(10, 10, 3, 0, Math.PI * 2);
+                    patternCtx.fill();
+                    break;
+                case 'linen':
+                    // Woven texture with lines
+                    patternCtx.fillRect(0, 0, 20, 1);
+                    patternCtx.fillRect(0, 10, 20, 1);
+                    break;
+                case 'velvet':
+                    // Velvet texture
+                    patternCtx.fillRect(0, 0, 20, 20);
+                    patternCtx.fillStyle = '#fff';
+                    patternCtx.fillRect(0, 0, 20, 1);
+                    break;
+                case 'chiffon':
+                    // Light, flowing texture
+                    patternCtx.beginPath();
+                    patternCtx.moveTo(0, 10);
+                    patternCtx.bezierCurveTo(5, 5, 15, 15, 20, 10);
+                    patternCtx.stroke();
+                    break;
+            }
+            
+            const pattern = ctx.createPattern(patternCanvas, 'repeat');
+            ctx.fillStyle = pattern;
+        }
+
+        function updateStyle() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Adjust drawing style based on selected style
+            switch(currentStyle) {
+                case 'traditional':
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    break;
+                case 'modern':
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'square';
+                    ctx.lineJoin = 'miter';
+                    break;
+                case 'fusion':
+                    ctx.lineWidth = 2.5;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    break;
+                case 'casual':
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    break;
+            }
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            const tools = document.querySelectorAll('.tool-btn');
+            tools.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function startDrawing(e) {
+            if (currentTool === 'fill') {
+                floodFill(e.offsetX, e.offsetY);
+                return;
+            } else if (currentTool === 'colorFill') {
+                colorFill(e.offsetX, e.offsetY);
+                return;
+            }
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const drawCtx = drawingLayer.getContext('2d');
+            
+            if (currentTool === 'eraser') {
+                // Eraser functionality - only affects drawing layer
+                drawCtx.globalCompositeOperation = 'destination-out';
+                drawCtx.beginPath();
+                drawCtx.arc(e.offsetX, e.offsetY, currentSize, 0, Math.PI * 2);
+                drawCtx.fill();
+                drawCtx.globalCompositeOperation = 'source-over';
+            } else if (currentTool === 'draw') {
+                if (currentPattern !== 'solid') {
+                    drawPattern(e.offsetX, e.offsetY, currentPattern);
+                } else {
+                    // Regular line drawing with outline styles
+                    drawCtx.strokeStyle = currentColor;
+                    drawCtx.lineWidth = currentSize;
+                    
+                    switch(currentOutlineStyle) {
+                        case 'solid':
+                            drawCtx.setLineDash([]);
+                            break;
+                        case 'dashed':
+                            drawCtx.setLineDash([currentSize * 4, currentSize * 2]);
+                            break;
+                        case 'dotted':
+                            drawCtx.setLineDash([currentSize, currentSize * 2]);
+                            break;
+                        case 'double':
+                            // Draw first line
+                            drawCtx.setLineDash([]);
+                            drawCtx.beginPath();
+                            drawCtx.moveTo(lastX, lastY - currentSize/2);
+                            drawCtx.lineTo(e.offsetX, e.offsetY - currentSize/2);
+                            drawCtx.stroke();
+                            
+                            // Draw second line
+                            drawCtx.beginPath();
+                            drawCtx.moveTo(lastX, lastY + currentSize/2);
+                            drawCtx.lineTo(e.offsetX, e.offsetY + currentSize/2);
+                            drawCtx.stroke();
+                            break;
+                    }
+                    
+                    if (currentOutlineStyle !== 'double') {
+                        drawCtx.beginPath();
+                        drawCtx.moveTo(lastX, lastY);
+                        drawCtx.lineTo(e.offsetX, e.offsetY);
+                        drawCtx.stroke();
+                    }
+                }
+            }
+            
+            // Redraw the canvas
+            redrawCanvas();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // Update outline functionality
+        function toggleOutlineMenu() {
+            const menu = document.getElementById('outlineMenu');
+            menu.classList.toggle('show');
+        }
+
+        function selectClothingType(type) {
+            // Update button text
+            const button = document.querySelector('.outline-btn');
+            button.innerHTML = `<i class="fas fa-tshirt"></i> ${type}`;
+            
+            // Close menu
+            const menu = document.getElementById('outlineMenu');
+            menu.classList.remove('show');
+            
+            // Define image paths for different clothing types
+            const imagePaths = {
+                // Men's Wear
+                'suit': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 150121.png',
+                'tuxedo': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 152212.png',
+                'blazer': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 152401.png',
+                'waistcoat': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 152618.png',
+                'pant': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 152809.png',
+                'shirt': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153027.png',
+                'kurta': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153127.png',
+                'sherwani': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153233.png',
+                // Women's Wear
+                'dress': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153355.png',
+                'sheath': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 155146.png',
+                'lehenga': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153727.png',
+                'saree': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 153824.png',
+                'salwar': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 154938.png',
+                'frock': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 154126.png',
+                'kurthi': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 154210.png',
+                'anarkali': 'C:/Users/jyoth/OneDrive/Pictures/Screenshots/Screenshot 2025-04-02 154251.png'
+            };
+
+            // Get the canvas and context
+            const canvas = document.getElementById('designCanvas');
+            const bgCtx = backgroundLayer.getContext('2d');
+            
+            // Clear both layers
+            bgCtx.clearRect(0, 0, canvas.width, canvas.height);
+            const drawCtx = drawingLayer.getContext('2d');
+            drawCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Create and load the image
+            const img = new Image();
+            
+            // Add error handling
+            img.onerror = function() {
+                console.error('Error loading image:', imagePaths[type]);
+                alert('Error loading image. Please check if the image exists at: ' + imagePaths[type]);
+            };
+            
+            // When image loads, draw it on the background layer
+            img.onload = function() {
+                // Calculate size to fit 90% of canvas
+                const scale = Math.min(
+                    (canvas.width * 0.9) / img.width,
+                    (canvas.height * 0.9) / img.height
+                );
+                
+                const newWidth = img.width * scale;
+                const newHeight = img.height * scale;
+                
+                // Center the image
+                const x = (canvas.width - newWidth) / 2;
+                const y = (canvas.height - newHeight) / 2;
+                
+                // Draw the image on the background layer
+                bgCtx.drawImage(img, x, y, newWidth, newHeight);
+                
+                // Redraw the canvas
+                redrawCanvas();
+            };
+            
+            // Set the image source
+            img.src = imagePaths[type];
+        }
+
+        function showImageImportDialog() {
+            document.getElementById('imageImportDialog').style.display = 'block';
+        }
+
+        function closeImageImportDialog() {
+            document.getElementById('imageImportDialog').style.display = 'none';
+        }
+
+        function importImage() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            if (!imageUrl) {
+                alert('Please enter an image URL');
+                return;
+            }
+
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            img.onload = function() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Calculate dimensions to fit the image while maintaining aspect ratio
+                const scale = Math.min(
+                    canvas.width / img.width,
+                    canvas.height / img.height
+                ) * 0.8; // 80% of the maximum size
+
+                const newWidth = img.width * scale;
+                const newHeight = img.height * scale;
+
+                // Center the image
+                const x = (canvas.width - newWidth) / 2;
+                const y = (canvas.height - newHeight) / 2;
+
+                // Draw the image
+                ctx.drawImage(img, x, y, newWidth, newHeight);
+            };
+
+            img.onerror = function() {
+                alert('Error loading image. Please check the URL and try again.');
+            };
+
+            img.src = imageUrl;
+            closeImageImportDialog();
+        }
+
+        function floodFill(startX, startY) {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            
+            // Get the color at the clicked point
+            const startPos = (startY * canvas.width + startX) * 4;
+            const startR = pixels[startPos];
+            const startG = pixels[startPos + 1];
+            const startB = pixels[startPos + 2];
+            
+            // Convert current color to RGB
+            const fillColor = hexToRgb(currentColor);
+            
+            // Create a stack for the flood fill algorithm
+            const stack = [[startX, startY]];
+            
+            while (stack.length > 0) {
+                const [x, y] = stack.pop();
+                const pos = (y * canvas.width + x) * 4;
+                
+                // Check if the pixel is within bounds and matches the target color
+                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
+                if (pixels[pos] !== startR || pixels[pos + 1] !== startG || pixels[pos + 2] !== startB) continue;
+                
+                // Set the new color
+                pixels[pos] = fillColor.r;
+                pixels[pos + 1] = fillColor.g;
+                pixels[pos + 2] = fillColor.b;
+                
+                // Add neighboring pixels to the stack
+                stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+            }
+            
+            // Update the canvas with the new image data
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function hexToRgb(hex) {
+            // Remove the # if present
+            hex = hex.replace('#', '');
+            
+            // Parse the hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return { r, g, b };
+        }
+
+        // Save design functionality
+        document.querySelector('.save-btn').addEventListener('click', function() {
+            const canvas = document.getElementById('designCanvas');
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = 'design.png';
+            link.href = dataURL;
+            link.click();
+            
+            alert('Design saved successfully!');
+        });
+
+        function updateSize(value) {
+            currentSize = parseInt(value);
+            document.querySelector('.size-value').textContent = value + 'px';
+            
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.lineWidth = currentSize;
+        }
+
+        function loadPatterns() {
+            const patternGrid = document.querySelector('.pattern-grid');
+            patternGrid.innerHTML = patterns.map(pattern => `
+                <div class="pattern-item" onclick="selectPattern(${pattern.id})">
+                    <img src="${pattern.image}" alt="${pattern.name}">
+                </div>
+            `).join('');
+        }
+
+        function selectPattern(patternId) {
+            // Remove active class from all pattern items
+            document.querySelectorAll('.pattern-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add active class to selected pattern
+            const selectedItem = document.querySelector(`.pattern-item:nth-child(${patternId})`);
+            selectedItem.classList.add('active');
+
+            // Update selected pattern
+            selectedPattern = patterns.find(p => p.id === patternId);
+
+            // Apply pattern to dress preview
+            applyPatternToDress();
+        }
+
+        function selectDress(dressType) {
+            selectedDress = dressType;
+            const dressPreview = document.querySelector('.dress-preview img');
+            dressPreview.src = `images/dresses/${dressType}.jpg`;
+
+            // Apply pattern if one is selected
+            if (selectedPattern) {
+                applyPatternToDress();
+            }
+        }
+
+        function applyPatternToDress() {
+            const dressPreview = document.querySelector('.dress-preview');
+            let patternOverlay = document.querySelector('.pattern-overlay');
+            
+            if (!patternOverlay) {
+                patternOverlay = document.createElement('div');
+                patternOverlay.className = 'pattern-overlay';
+                dressPreview.appendChild(patternOverlay);
+            }
+
+            // Remove all pattern classes
+            patternOverlay.className = 'pattern-overlay';
+            
+            // Add the specific pattern class
+            switch(selectedPattern.name.toLowerCase()) {
+                case 'floral':
+                    patternOverlay.classList.add('floral-pattern');
+                    break;
+                case 'stripes':
+                    patternOverlay.classList.add('stripes-pattern');
+                    break;
+                case 'polka dots':
+                    patternOverlay.classList.add('dots-pattern');
+                    break;
+                case 'geometric':
+                    patternOverlay.classList.add('geometric-pattern');
+                    break;
+            }
+
+            // Apply current pattern settings
+            patternOverlay.style.opacity = '0.7';
+            patternOverlay.style.transform = `scale(1) rotate(0deg)`;
+        }
+
+        function adjustPatternScale(value) {
+            const overlay = document.querySelector('.pattern-overlay');
+            if (overlay) {
+                const currentTransform = overlay.style.transform;
+                const currentRotation = currentTransform.match(/rotate\((\d+)deg\)/);
+                const rotation = currentRotation ? currentRotation[1] : '0';
+                overlay.style.transform = `scale(${value}) rotate(${rotation}deg)`;
+            }
+        }
+
+        function rotatePattern(direction) {
+            const overlay = document.querySelector('.pattern-overlay');
+            if (overlay) {
+                const currentTransform = overlay.style.transform;
+                const currentScale = currentTransform.match(/scale\(([\d.]+)\)/);
+                const currentRotation = currentTransform.match(/rotate\((\d+)deg\)/);
+                const scale = currentScale ? currentScale[1] : '1';
+                const currentDeg = currentRotation ? parseInt(currentRotation[1]) : 0;
+                const newDeg = direction === 'left' ? currentDeg - 15 : currentDeg + 15;
+                overlay.style.transform = `scale(${scale}) rotate(${newDeg}deg)`;
+            }
+        }
+
+        function colorFill(startX, startY) {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            
+            // Get the color at the clicked point
+            const startPos = (startY * canvas.width + startX) * 4;
+            const startR = pixels[startPos];
+            const startG = pixels[startPos + 1];
+            const startB = pixels[startPos + 2];
+            
+            // Convert current color to RGB
+            const fillColor = hexToRgb(currentColor);
+            
+            // Create a stack for the flood fill algorithm
+            const stack = [[startX, startY]];
+            const visited = new Set();
+            
+            while (stack.length > 0) {
+                const [x, y] = stack.pop();
+                const pos = (y * canvas.width + x) * 4;
+                const key = `${x},${y}`;
+                
+                // Check if the pixel is within bounds and matches the target color
+                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
+                if (visited.has(key)) continue;
+                
+                // Check if the pixel is white or transparent
+                const isWhite = pixels[pos] === 255 && pixels[pos + 1] === 255 && pixels[pos + 2] === 255;
+                const isTransparent = pixels[pos + 3] === 0;
+                
+                if (!isWhite && !isTransparent) continue;
+                
+                visited.add(key);
+                
+                // Set the new color
+                pixels[pos] = fillColor.r;
+                pixels[pos + 1] = fillColor.g;
+                pixels[pos + 2] = fillColor.b;
+                pixels[pos + 3] = 255; // Set alpha to fully opaque
+                
+                // Add neighboring pixels to the stack
+                stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+            }
+            
+            // Update the canvas with the new image data
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Add new outline control functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Outline style selection
+            const outlineStyles = document.querySelectorAll('.outline-style');
+            outlineStyles.forEach(style => {
+                style.addEventListener('click', function() {
+                    outlineStyles.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                    updateOutlineStyle(this.dataset.style);
+                });
+            });
+
+            // Outline thickness control
+            const thicknessSlider = document.querySelector('.thickness-slider');
+            
+            // Set initial thickness
+            const initialThickness = parseInt(thicknessSlider.value);
+            currentSize = initialThickness;
+            updateOutlineThickness(initialThickness);
+            
+            // Add input event listener
+            thicknessSlider.addEventListener('input', function() {
+                updateOutlineThickness(this.value);
+            });
+        });
+
+        function updateOutlineStyle(style) {
+            currentOutlineStyle = style;
+            
+            // Update active state in UI
+            document.querySelectorAll('.outline-style').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.style === style) {
+                    el.classList.add('active');
+                }
+            });
+            
+            // Update preview lines
+            document.querySelectorAll('.line-preview').forEach(preview => {
+                const parent = preview.parentElement;
+                const style = parent.dataset.style;
+                
+                switch(style) {
+                    case 'solid':
+                        preview.style.borderStyle = 'solid';
+                        preview.style.borderWidth = '2px';
+                        preview.style.borderColor = '#333';
+                        preview.style.height = '0';
+                        break;
+                    case 'dashed':
+                        preview.style.borderStyle = 'dashed';
+                        preview.style.borderWidth = '2px';
+                        preview.style.borderColor = '#333';
+                        preview.style.height = '0';
+                        break;
+                    case 'dotted':
+                        preview.style.borderStyle = 'dotted';
+                        preview.style.borderWidth = '2px';
+                        preview.style.borderColor = '#333';
+                        preview.style.height = '0';
+                        break;
+                    case 'double':
+                        preview.style.borderStyle = 'double';
+                        preview.style.borderWidth = '4px';
+                        preview.style.borderColor = '#333';
+                        preview.style.height = '0';
+                        break;
+                }
+            });
+            
+            // Update canvas context
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            switch(style) {
+                case 'solid':
+                    ctx.setLineDash([]);
+                    break;
+                case 'dashed':
+                    ctx.setLineDash([currentSize * 4, currentSize * 2]);
+                    break;
+                case 'dotted':
+                    ctx.setLineDash([currentSize, currentSize * 2]);
+                    break;
+                case 'double':
+                    ctx.setLineDash([]);
+                    break;
+            }
+        }
+
+        function updateOutlineThickness(thickness) {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const value = parseInt(thickness);
+            
+            // Update thickness value display
+            document.querySelector('.thickness-value').textContent = value + 'px';
+            
+            // Store the current thickness
+            currentSize = value;
+            
+            // Update line width based on current style
+            switch(currentOutlineStyle) {
+                case 'solid':
+                    ctx.lineWidth = value;
+                    ctx.setLineDash([]);
+                    break;
+                case 'dashed':
+                    ctx.lineWidth = value;
+                    ctx.setLineDash([value * 4, value * 2]);
+                    break;
+                case 'dotted':
+                    ctx.lineWidth = value;
+                    ctx.setLineDash([value, value * 2]);
+                    break;
+                case 'double':
+                    ctx.lineWidth = value;
+                    break;
+            }
+            
+            // Update preview lines in the UI
+            document.querySelectorAll('.outline-style').forEach(style => {
+                const preview = style.querySelector('.line-preview');
+                if (preview) {
+                    preview.style.height = value + 'px';
+                }
+            });
+        }
+
+        // Add these new functions for image upload handling
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('uploadPreview');
+                    const previewImage = document.getElementById('previewImage');
+                    
+                    previewImage.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function applyUploadedImage() {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const bgCtx = backgroundLayer.getContext('2d');
+            const previewImage = document.getElementById('previewImage');
+            
+            // Clear the background layer
+            bgCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate dimensions to fit the image while maintaining aspect ratio
+            const scale = Math.min(
+                (canvas.width * 0.9) / previewImage.naturalWidth,
+                (canvas.height * 0.9) / previewImage.naturalHeight
+            );
+            
+            const newWidth = previewImage.naturalWidth * scale;
+            const newHeight = previewImage.naturalHeight * scale;
+            
+            // Center the image
+            const x = (canvas.width - newWidth) / 2;
+            const y = (canvas.height - newHeight) / 2;
+            
+            // Draw the image on the background layer
+            bgCtx.drawImage(previewImage, x, y, newWidth, newHeight);
+            
+            // Redraw the canvas
+            redrawCanvas();
+            
+            // Hide the preview
+            document.getElementById('uploadPreview').style.display = 'none';
+            
+            // Reset the file input
+            document.getElementById('uploadInput').value = '';
+        }
+
+        function cancelUpload() {
+            // Hide the preview
+            document.getElementById('uploadPreview').style.display = 'none';
+            
+            // Reset the file input
+            document.getElementById('uploadInput').value = '';
+        }
+
+        // Add pattern drawing functions
+        function drawPattern(x, y, pattern) {
+            const canvas = document.getElementById('designCanvas');
+            const ctx = canvas.getContext('2d');
+            const drawCtx = drawingLayer.getContext('2d');
+            
+            drawCtx.save();
+            drawCtx.strokeStyle = currentColor;
+            drawCtx.fillStyle = currentColor;
+            
+            switch(pattern) {
+                case 'floral':
+                    // Draw flower petals
+                    for (let i = 0; i < 5; i++) {
+                        drawCtx.beginPath();
+                        drawCtx.ellipse(
+                            x + Math.cos(i * Math.PI * 2 / 5) * currentSize,
+                            y + Math.sin(i * Math.PI * 2 / 5) * currentSize,
+                            currentSize/2,
+                            currentSize/3,
+                            i * Math.PI * 2 / 5,
+                            0,
+                            Math.PI * 2
+                        );
+                        drawCtx.fill();
+                    }
+                    // Draw center
+                    drawCtx.beginPath();
+                    drawCtx.arc(x, y, currentSize/3, 0, Math.PI * 2);
+                    drawCtx.fill();
+                    break;
+                    
+                case 'geometric':
+                    // Draw geometric shape
+                    drawCtx.beginPath();
+                    drawCtx.moveTo(x - currentSize, y - currentSize);
+                    drawCtx.lineTo(x + currentSize, y - currentSize);
+                    drawCtx.lineTo(x + currentSize, y + currentSize);
+                    drawCtx.lineTo(x - currentSize, y + currentSize);
+                    drawCtx.closePath();
+                    drawCtx.stroke();
+                    
+                    // Draw inner lines
+                    drawCtx.beginPath();
+                    drawCtx.moveTo(x, y - currentSize);
+                    drawCtx.lineTo(x, y + currentSize);
+                    drawCtx.moveTo(x - currentSize, y);
+                    drawCtx.lineTo(x + currentSize, y);
+                    drawCtx.stroke();
+                    break;
+                    
+                case 'stripes':
+                    // Draw vertical stripes
+                    for (let i = -2; i <= 2; i++) {
+                        drawCtx.beginPath();
+                        drawCtx.moveTo(x + i * currentSize, y - currentSize * 2);
+                        drawCtx.lineTo(x + i * currentSize, y + currentSize * 2);
+                        drawCtx.stroke();
+                    }
+                    break;
+                    
+                case 'dots':
+                    // Draw main dot
+                    drawCtx.beginPath();
+                    drawCtx.arc(x, y, currentSize/2, 0, Math.PI * 2);
+                    drawCtx.fill();
+                    
+                    // Draw surrounding dots
+                    const numDots = 6;
+                    const radius = currentSize;
+                    for (let i = 0; i < numDots; i++) {
+                        const angle = (i * Math.PI * 2) / numDots;
+                        const dotX = x + Math.cos(angle) * radius;
+                        const dotY = y + Math.sin(angle) * radius;
+                        
+                        drawCtx.beginPath();
+                        drawCtx.arc(dotX, dotY, currentSize/3, 0, Math.PI * 2);
+                        drawCtx.fill();
+                    }
+                    break;
+                    
+                case 'solid':
+                    // Draw solid square
+                    drawCtx.fillRect(x - currentSize/2, y - currentSize/2, currentSize, currentSize);
+                    break;
+                    
+                case 'embroidered':
+                    // Draw embroidered pattern
+                    for (let i = 0; i < 4; i++) {
+                        drawCtx.beginPath();
+                        drawCtx.arc(x, y, currentSize, i * Math.PI/2, (i + 0.5) * Math.PI/2);
+                        drawCtx.stroke();
+                    }
+                    
+                    // Draw center detail
+                    drawCtx.beginPath();
+                    drawCtx.arc(x, y, currentSize/2, 0, Math.PI * 2);
+                    drawCtx.stroke();
+                    
+                    // Add decorative elements
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (i * Math.PI) / 4;
+                        const dotX = x + Math.cos(angle) * currentSize * 0.7;
+                        const dotY = y + Math.sin(angle) * currentSize * 0.7;
+                        
+                        drawCtx.beginPath();
+                        drawCtx.arc(dotX, dotY, currentSize/4, 0, Math.PI * 2);
+                        drawCtx.fill();
+                    }
+                    break;
+            }
+            
+            drawCtx.restore();
+            redrawCanvas();
+        }
+
+        function updateTimeLimit(days) {
+            if (days) {
+                // Store the selected time limit
+                localStorage.setItem('designTimeLimit', days);
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #4CAF50;
+                    color: white;
+                    padding: 15px 30px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    animation: fadeInOut 3s ease;
+                `;
+                successMessage.textContent = `Time limit set to ${days} day${days > 1 ? 's' : ''}`;
+                document.body.appendChild(successMessage);
+
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 3000);
+            }
+        }
+
+        // Load saved time limit on page load
+        window.addEventListener('load', function() {
+            const savedTimeLimit = localStorage.getItem('designTimeLimit');
+            if (savedTimeLimit) {
+                document.getElementById('timeLimit').value = savedTimeLimit;
+            }
+        });
+
+        function submitDesign() {
+            // Get the selected time limit
+            const timeLimit = document.getElementById('timeLimit').value;
+            
+            if (!timeLimit) {
+                alert('Please select a time limit before submitting');
+                return;
+            }
+
+            // Get the canvas data
+            const canvas = document.getElementById('designCanvas');
+            const designData = canvas.toDataURL('image/png');
+
+            // Create success message
+            const successMessage = document.createElement('div');
+            successMessage.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #4CAF50;
+                color: white;
+                padding: 15px 30px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                z-index: 1000;
+                animation: fadeInOut 3s ease;
+            `;
+            successMessage.textContent = 'Design submitted successfully!';
+            document.body.appendChild(successMessage);
+
+            // Remove success message after 3 seconds
+            setTimeout(() => {
+                successMessage.remove();
+            }, 3000);
+
+            // Here you would typically send the design data to your server
+            console.log('Design submitted with time limit:', timeLimit, 'days');
+            console.log('Design data:', designData);
+        }
+    </script>
+</body>
+</html>

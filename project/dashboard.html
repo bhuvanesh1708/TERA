@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERA - Tailor Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .dashboard {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 2rem;
+        }
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .user-name {
+            font-weight: 500;
+        }
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            min-height: 220px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card h3 {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bcd4;
+            margin-bottom: 10px;
+        }
+        .stat-card .trend {
+            margin-top: 10px;
+        }
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+            padding: 2px 0;
+        }
+        .trend-label {
+            color: #666;
+            flex: 1;
+        }
+        .trend-value {
+            color: #333;
+            font-weight: 500;
+            text-align: right;
+            min-width: 80px;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chart-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 18px;
+        }
+        .nearby-customers {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nearby-customers h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 18px;
+        }
+        .customer-list {
+            margin-top: 20px;
+        }
+        .customer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        .customer-item:hover {
+            background: #f9f9f9;
+        }
+        .customer-info {
+            flex: 1;
+        }
+        .customer-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .customer-address {
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .order-details {
+            text-align: right;
+        }
+        .order-type {
+            font-weight: bold;
+            color: #00bcd4;
+            margin-bottom: 5px;
+        }
+        .order-status {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        .status-pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        .status-completed {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+        .status-in-progress {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+        .order-date {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #f5f5f5;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-button.active {
+            background: #00bcd4;
+            color: white;
+        }
+        .filter-button:hover {
+            background: #e0e0e0;
+        }
+        .filter-button.active:hover {
+            background: #0097a7;
+        }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            padding: 1rem 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #95a5a6;
+            transition: color 0.3s;
+        }
+
+        .footer-item:hover {
+            color: #3498db;
+        }
+
+        .footer-item.active {
+            color: #3498db;
+        }
+
+        .footer-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-item span {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div class="logo">TERA</div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search orders, customers...">
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">T</div>
+                <span class="user-name">Tailor</span>
+        </div>
+        </header>
+
+        <main class="main-content">
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                    <div class="number">17</div>
+                    <div class="trend">
+                        <div class="trend-item">
+                            <span class="trend-label">Suits:</span>
+                            <span class="trend-value">5 (29%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Dresses:</span>
+                            <span class="trend-value">4 (24%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Lehengas:</span>
+                            <span class="trend-value">3 (18%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Blazers:</span>
+                            <span class="trend-value">3 (18%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Others:</span>
+                            <span class="trend-value">2 (11%)</span>
+                        </div>
+                    </div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed Orders</h3>
+                    <div class="number">6</div>
+                    <div class="trend">
+                        <div class="trend-item">
+                            <span class="trend-label">Suits:</span>
+                            <span class="trend-value">2 (33%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Dresses:</span>
+                            <span class="trend-value">1 (17%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Lehengas:</span>
+                            <span class="trend-value">1 (17%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Blazers:</span>
+                            <span class="trend-value">1 (17%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Others:</span>
+                            <span class="trend-value">1 (16%)</span>
+                        </div>
+                    </div>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Orders</h3>
+                    <div class="number">6</div>
+                    <div class="trend">
+                        <div class="trend-item">
+                            <span class="trend-label">Suits:</span>
+                            <span class="trend-value">2 (33%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Dresses:</span>
+                            <span class="trend-value">2 (33%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Lehengas:</span>
+                            <span class="trend-value">1 (17%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Blazers:</span>
+                            <span class="trend-value">1 (17%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Others:</span>
+                            <span class="trend-value">0 (0%)</span>
+                        </div>
+                    </div>
+            </div>
+            <div class="stat-card">
+                <h3>In Progress</h3>
+                <div class="number">5</div>
+                    <div class="trend">
+                        <div class="trend-item">
+                            <span class="trend-label">Suits:</span>
+                            <span class="trend-value">1 (20%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Dresses:</span>
+                            <span class="trend-value">1 (20%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Lehengas:</span>
+                            <span class="trend-value">1 (20%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Blazers:</span>
+                            <span class="trend-value">1 (20%)</span>
+                        </div>
+                        <div class="trend-item">
+                            <span class="trend-label">Others:</span>
+                            <span class="trend-value">1 (20%)</span>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>Monthly Performance</h3>
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Order Types Distribution</h3>
+                <canvas id="orderTypesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="nearby-customers">
+            <h3>Recent Orders</h3>
+            <div class="filter-buttons">
+                <button class="filter-button active" onclick="filterOrders('all')">All</button>
+                <button class="filter-button" onclick="filterOrders('pending')">Pending</button>
+                <button class="filter-button" onclick="filterOrders('in-progress')">In Progress</button>
+                <button class="filter-button" onclick="filterOrders('completed')">Completed</button>
+            </div>
+            <div class="customer-list">
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">John Doe</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 123 Main St, 2km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Classic Suit</div>
+                        <div class="order-status status-pending">Pending</div>
+                        <div class="order-date">Ordered: Apr 2, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Jane Smith</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 456 Oak Ave, 3km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Wedding Dress</div>
+                        <div class="order-status status-in-progress">In Progress</div>
+                        <div class="order-date">Ordered: Apr 1, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Mike Johnson</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 789 Pine Rd, 1km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Blazer</div>
+                        <div class="order-status status-completed">Completed</div>
+                        <div class="order-date">Ordered: Mar 30, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Sarah Wilson</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 321 Maple Dr, 4km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Lehenga</div>
+                        <div class="order-status status-pending">Pending</div>
+                        <div class="order-date">Ordered: Apr 3, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">David Brown</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 654 Elm St, 2.5km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Tuxedo</div>
+                        <div class="order-status status-in-progress">In Progress</div>
+                        <div class="order-date">Ordered: Apr 2, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Emma Davis</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 987 Cedar Ln, 1.5km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Saree</div>
+                        <div class="order-status status-completed">Completed</div>
+                        <div class="order-date">Ordered: Mar 29, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Robert Taylor</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 147 Birch Rd, 3km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Kurta Set</div>
+                        <div class="order-status status-pending">Pending</div>
+                        <div class="order-date">Ordered: Apr 3, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Lisa Anderson</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 258 Willow Ave, 2.8km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Evening Gown</div>
+                        <div class="order-status status-in-progress">In Progress</div>
+                        <div class="order-date">Ordered: Apr 1, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">James Wilson</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 369 Spruce St, 1.2km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Sherwani</div>
+                        <div class="order-status status-completed">Completed</div>
+                        <div class="order-date">Ordered: Mar 28, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Maria Garcia</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 741 Ash Rd, 3.5km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Cocktail Dress</div>
+                        <div class="order-status status-pending">Pending</div>
+                        <div class="order-date">Ordered: Apr 4, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Thomas Lee</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 852 Pine St, 2.3km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Waistcoat</div>
+                        <div class="order-status status-in-progress">In Progress</div>
+                        <div class="order-date">Ordered: Apr 2, 2024</div>
+                    </div>
+                </div>
+                <div class="customer-item">
+                    <div class="customer-info">
+                        <div class="customer-name">Sophie Chen</div>
+                        <div class="customer-address">
+                            <i class="fas fa-map-marker-alt"></i> 963 Oak Ln, 1.8km away
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-type">Bridal Lehenga</div>
+                        <div class="order-status status-completed">Completed</div>
+                        <div class="order-date">Ordered: Mar 27, 2024</div>
+                        </div>
+                    </div>
+                    <!-- Additional orders -->
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-name">Alex Turner</div>
+                            <div class="customer-address">
+                                <i class="fas fa-map-marker-alt"></i> 159 Maple Ave, 2.1km away
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-type">Classic Suit</div>
+                            <div class="order-status status-completed">Completed</div>
+                            <div class="order-date">Ordered: Mar 25, 2024</div>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-name">Rachel Green</div>
+                            <div class="customer-address">
+                                <i class="fas fa-map-marker-alt"></i> 357 Oak St, 3.2km away
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-type">Wedding Dress</div>
+                            <div class="order-status status-pending">Pending</div>
+                            <div class="order-date">Ordered: Apr 5, 2024</div>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-name">Michael Scott</div>
+                            <div class="customer-address">
+                                <i class="fas fa-map-marker-alt"></i> 753 Pine Dr, 1.5km away
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-type">Tuxedo</div>
+                            <div class="order-status status-completed">Completed</div>
+                            <div class="order-date">Ordered: Mar 26, 2024</div>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-name">Priya Patel</div>
+                            <div class="customer-address">
+                                <i class="fas fa-map-marker-alt"></i> 456 Cedar Rd, 2.8km away
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-type">Lehenga</div>
+                            <div class="order-status status-in-progress">In Progress</div>
+                            <div class="order-date">Ordered: Apr 3, 2024</div>
+                        </div>
+                    </div>
+                    <div class="customer-item">
+                        <div class="customer-info">
+                            <div class="customer-name">David Kim</div>
+                            <div class="customer-address">
+                                <i class="fas fa-map-marker-alt"></i> 852 Birch Ln, 1.9km away
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-type">Blazer</div>
+                            <div class="order-status status-pending">Pending</div>
+                            <div class="order-date">Ordered: Apr 4, 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <nav class="footer-nav">
+            <a href="index2.html" class="footer-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="bidding.html" class="footer-item">
+                <i class="fas fa-gavel"></i>
+                <span>Bidding</span>
+            </a>
+            <a href="accounts2.html" class="footer-item">
+                <i class="fas fa-user"></i>
+                <span>Accounts</span>
+            </a>
+            <a href="dashboard.html" class="footer-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </nav>
+    </footer>
+
+    <script>
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Orders Completed',
+                    data: [20, 25, 30, 35, 40, 45],
+                    borderColor: '#00bcd4',
+                    backgroundColor: 'rgba(0, 188, 212, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 5
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+
+        // Order Types Chart
+        const orderTypesCtx = document.getElementById('orderTypesChart').getContext('2d');
+        new Chart(orderTypesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Suits', 'Dresses', 'Lehengas', 'Blazers', 'Others'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        '#00bcd4',
+                        '#ff9800',
+                        '#4caf50',
+                        '#2196f3',
+                        '#9c27b0'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+
+        // Enhanced Search functionality
+        function searchOrders() {
+            const searchTerm = document.querySelector('.search-bar input').value.toLowerCase();
+            const customerItems = document.querySelectorAll('.customer-item');
+            let orderTypeStats = {
+                total: 0,
+                suits: 0,
+                dresses: 0,
+                lehengas: 0,
+                blazers: 0,
+                others: 0
+            };
+            
+            // First, count all orders by type
+            customerItems.forEach(item => {
+                const orderType = item.querySelector('.order-type').textContent.toLowerCase();
+                if (orderType.includes('suit')) orderTypeStats.suits++;
+                else if (orderType.includes('dress')) orderTypeStats.dresses++;
+                else if (orderType.includes('lehenga')) orderTypeStats.lehengas++;
+                else if (orderType.includes('blazer')) orderTypeStats.blazers++;
+                else orderTypeStats.others++;
+            });
+
+            // Calculate total
+            orderTypeStats.total = orderTypeStats.suits + orderTypeStats.dresses + 
+                                 orderTypeStats.lehengas + orderTypeStats.blazers + 
+                                 orderTypeStats.others;
+
+            // Then filter and display items based on search term
+            customerItems.forEach(item => {
+                const orderType = item.querySelector('.order-type').textContent.toLowerCase();
+                const customerName = item.querySelector('.customer-name').textContent.toLowerCase();
+                const customerAddress = item.querySelector('.customer-address').textContent.toLowerCase();
+                const orderStatus = item.querySelector('.order-status').textContent.toLowerCase();
+                const orderDate = item.querySelector('.order-date').textContent.toLowerCase();
+                
+                if (!searchTerm || 
+                    orderType.includes(searchTerm) || 
+                    customerName.includes(searchTerm) || 
+                    customerAddress.includes(searchTerm) ||
+                    orderStatus.includes(searchTerm) ||
+                    orderDate.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update stat cards with the correct counts
+            if (searchTerm) {
+                // Filter orders by type for the search term
+                const filteredItems = Array.from(customerItems).filter(item => 
+                    item.querySelector('.order-type').textContent.toLowerCase().includes(searchTerm)
+                );
+                
+                const filteredStats = {
+                    suits: filteredItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('suit')).length,
+                    dresses: filteredItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('dress')).length,
+                    lehengas: filteredItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('lehenga')).length,
+                    blazers: filteredItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('blazer')).length,
+                    others: filteredItems.filter(item => !['suit', 'dress', 'lehenga', 'blazer'].some(type => 
+                        item.querySelector('.order-type').textContent.toLowerCase().includes(type))).length
+                };
+                const totalFiltered = filteredItems.length;
+
+                // Update Total Orders card
+                document.querySelector('.stat-card:nth-child(1) .number').textContent = totalFiltered;
+                document.querySelector('.stat-card:nth-child(1) .trend').innerHTML = `
+                    <div class="trend-item">
+                        <span class="trend-label">Suits:</span>
+                        <span class="trend-value">${filteredStats.suits} (${Math.round((filteredStats.suits/totalFiltered)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Dresses:</span>
+                        <span class="trend-value">${filteredStats.dresses} (${Math.round((filteredStats.dresses/totalFiltered)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Lehengas:</span>
+                        <span class="trend-value">${filteredStats.lehengas} (${Math.round((filteredStats.lehengas/totalFiltered)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Blazers:</span>
+                        <span class="trend-value">${filteredStats.blazers} (${Math.round((filteredStats.blazers/totalFiltered)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Others:</span>
+                        <span class="trend-value">${filteredStats.others} (${Math.round((filteredStats.others/totalFiltered)*100)}%)</span>
+                    </div>
+                `;
+
+                // Update Completed Orders card
+                const completedItems = filteredItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('completed')
+                );
+                const completedStats = {
+                    suits: completedItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('suit')).length,
+                    dresses: completedItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('dress')).length,
+                    lehengas: completedItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('lehenga')).length,
+                    blazers: completedItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('blazer')).length,
+                    others: completedItems.filter(item => !['suit', 'dress', 'lehenga', 'blazer'].some(type => 
+                        item.querySelector('.order-type').textContent.toLowerCase().includes(type))).length
+                };
+                const totalCompleted = completedItems.length;
+
+                document.querySelector('.stat-card:nth-child(2) .number').textContent = totalCompleted;
+                document.querySelector('.stat-card:nth-child(2) .trend').innerHTML = `
+                    <div class="trend-item">
+                        <span class="trend-label">Suits:</span>
+                        <span class="trend-value">${completedStats.suits} (${Math.round((completedStats.suits/totalCompleted)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Dresses:</span>
+                        <span class="trend-value">${completedStats.dresses} (${Math.round((completedStats.dresses/totalCompleted)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Lehengas:</span>
+                        <span class="trend-value">${completedStats.lehengas} (${Math.round((completedStats.lehengas/totalCompleted)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Blazers:</span>
+                        <span class="trend-value">${completedStats.blazers} (${Math.round((completedStats.blazers/totalCompleted)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Others:</span>
+                        <span class="trend-value">${completedStats.others} (${Math.round((completedStats.others/totalCompleted)*100)}%)</span>
+                    </div>
+                `;
+
+                // Update Pending Orders card
+                const pendingItems = filteredItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('pending')
+                );
+                const pendingStats = {
+                    suits: pendingItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('suit')).length,
+                    dresses: pendingItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('dress')).length,
+                    lehengas: pendingItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('lehenga')).length,
+                    blazers: pendingItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('blazer')).length,
+                    others: pendingItems.filter(item => !['suit', 'dress', 'lehenga', 'blazer'].some(type => 
+                        item.querySelector('.order-type').textContent.toLowerCase().includes(type))).length
+                };
+                const totalPending = pendingItems.length;
+
+                document.querySelector('.stat-card:nth-child(3) .number').textContent = totalPending;
+                document.querySelector('.stat-card:nth-child(3) .trend').innerHTML = `
+                    <div class="trend-item">
+                        <span class="trend-label">Suits:</span>
+                        <span class="trend-value">${pendingStats.suits} (${Math.round((pendingStats.suits/totalPending)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Dresses:</span>
+                        <span class="trend-value">${pendingStats.dresses} (${Math.round((pendingStats.dresses/totalPending)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Lehengas:</span>
+                        <span class="trend-value">${pendingStats.lehengas} (${Math.round((pendingStats.lehengas/totalPending)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Blazers:</span>
+                        <span class="trend-value">${pendingStats.blazers} (${Math.round((pendingStats.blazers/totalPending)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Others:</span>
+                        <span class="trend-value">${pendingStats.others} (${Math.round((pendingStats.others/totalPending)*100)}%)</span>
+                    </div>
+                `;
+
+                // Update In Progress card
+                const inProgressItems = filteredItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('in progress')
+                );
+                const inProgressStats = {
+                    suits: inProgressItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('suit')).length,
+                    dresses: inProgressItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('dress')).length,
+                    lehengas: inProgressItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('lehenga')).length,
+                    blazers: inProgressItems.filter(item => item.querySelector('.order-type').textContent.toLowerCase().includes('blazer')).length,
+                    others: inProgressItems.filter(item => !['suit', 'dress', 'lehenga', 'blazer'].some(type => 
+                        item.querySelector('.order-type').textContent.toLowerCase().includes(type))).length
+                };
+                const totalInProgress = inProgressItems.length;
+
+                document.querySelector('.stat-card:nth-child(4) .number').textContent = totalInProgress;
+                document.querySelector('.stat-card:nth-child(4) .trend').innerHTML = `
+                    <div class="trend-item">
+                        <span class="trend-label">Suits:</span>
+                        <span class="trend-value">${inProgressStats.suits} (${Math.round((inProgressStats.suits/totalInProgress)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Dresses:</span>
+                        <span class="trend-value">${inProgressStats.dresses} (${Math.round((inProgressStats.dresses/totalInProgress)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Lehengas:</span>
+                        <span class="trend-value">${inProgressStats.lehengas} (${Math.round((inProgressStats.lehengas/totalInProgress)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Blazers:</span>
+                        <span class="trend-value">${inProgressStats.blazers} (${Math.round((inProgressStats.blazers/totalInProgress)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Others:</span>
+                        <span class="trend-value">${inProgressStats.others} (${Math.round((inProgressStats.others/totalInProgress)*100)}%)</span>
+                    </div>
+                `;
+            } else {
+                // When search is cleared, show all orders
+                document.querySelector('.stat-card:nth-child(1) .number').textContent = orderTypeStats.total;
+                document.querySelector('.stat-card:nth-child(1) .trend').innerHTML = `
+                    <div class="trend-item">
+                        <span class="trend-label">Suits:</span>
+                        <span class="trend-value">${orderTypeStats.suits} (${Math.round((orderTypeStats.suits/orderTypeStats.total)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Dresses:</span>
+                        <span class="trend-value">${orderTypeStats.dresses} (${Math.round((orderTypeStats.dresses/orderTypeStats.total)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Lehengas:</span>
+                        <span class="trend-value">${orderTypeStats.lehengas} (${Math.round((orderTypeStats.lehengas/orderTypeStats.total)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Blazers:</span>
+                        <span class="trend-value">${orderTypeStats.blazers} (${Math.round((orderTypeStats.blazers/orderTypeStats.total)*100)}%)</span>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">Others:</span>
+                        <span class="trend-value">${orderTypeStats.others} (${Math.round((orderTypeStats.others/orderTypeStats.total)*100)}%)</span>
+                    </div>
+                `;
+
+                // Update other stat cards with all orders
+                const allItems = Array.from(customerItems);
+                const completedItems = allItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('completed')
+                );
+                const pendingItems = allItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('pending')
+                );
+                const inProgressItems = allItems.filter(item => 
+                    item.querySelector('.order-status').textContent.toLowerCase().includes('in progress')
+                );
+
+                document.querySelector('.stat-card:nth-child(2) .number').textContent = completedItems.length;
+                document.querySelector('.stat-card:nth-child(3) .number').textContent = pendingItems.length;
+                document.querySelector('.stat-card:nth-child(4) .number').textContent = inProgressItems.length;
+            }
+        }
+
+        // Filter functionality
+        function filterOrders(status) {
+            const buttons = document.querySelectorAll('.filter-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const customerItems = document.querySelectorAll('.customer-item');
+            customerItems.forEach(item => {
+                const orderStatus = item.querySelector('.order-status').textContent.toLowerCase();
+                if (status === 'all' || orderStatus.includes(status)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
